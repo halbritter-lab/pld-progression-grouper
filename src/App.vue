@@ -1,6 +1,9 @@
 <template>
   <div id="app" class="container">
-    <h1 class="app-title">PLD-Progression Grouper</h1>
+    <div class="header">
+      <img src="logo.webp" alt="PLD-Progression Grouper Logo" class="app-logo">
+      <h1 class="app-title">PLD-Progression Grouper</h1>
+    </div>
     <div class="content">
       <div class="controls">
         <div class="input-group">
@@ -205,16 +208,29 @@ export default {
   font-family: Arial, sans-serif;
 }
 
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Centers the content horizontally */
+  text-align: center;
+  width: 100%; /* Ensure the header takes full width */
+}
+
+.app-logo {
+  max-width: 92px; /* Adjust size as needed */
+  margin-right: 20px; /* Spacing between logo and title */
+}
+
+.app-title {
+  font-size: 24px;
+  font-weight: bold;
+  margin: 0; /* Remove default margin */
+}
+
 .container {
   text-align: center;
   max-width: 800px;
   margin: auto;
-}
-
-.app-title {
-  margin-top: 20px;
-  font-size: 24px;
-  font-weight: bold;
 }
 
 .input-group {
