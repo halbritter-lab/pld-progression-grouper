@@ -7,6 +7,12 @@
 
 ADPLD, characterized by numerous fluid-filled cysts arising from intrahepatic biliary epithelia, is a genetic cholangiopathy with significant clinical heterogeneity. The application leverages data from a multicenter study to introduce novel clinical endpoints, such as normalized age-adjusted total liver volume (nTLV) and PLD-related hospitalization, for prognostic risk stratification.
 
+
+## References
+
+The pronciple of the "PLD-Progression Grouper" tool has been previously used in 2022, highlighting its application in the study of Polycystic Liver Disease (PLD) within the context of both Autosomal Dominant Polycystic Kidney Disease (ADPKD) and Autosomal Dominant Polycystic Liver Disease (ADPLD). This underscores the tool's relevance and adaptability for assessing PLD progression not only in isolated cases but also when it occurs in conjunction with ADPKD. For more details on the publication, see [PMID:36246085](https://pubmed.ncbi.nlm.nih.gov/36246085/).
+
+
 ## Features
 
 - **Data Input and Visualization:** Users can input individual-specific data, including age and total liver volume, to visualize the normalized total liver volume (nTLV) on a chart.
