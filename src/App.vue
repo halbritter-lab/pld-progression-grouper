@@ -1,5 +1,32 @@
 <template>
   <div id="app" class="container">
+    <div v-if="showModal" class="modal">
+      <div class="modal-content">
+        <h2>Disclaimer for PLD-Progression Grouper</h2>
+        
+        <h3>Important Information for All Users:</h3>
+        <p>The "PLD-Progression Grouper" application is intended for informational, educational and research purposes only and should not be used as a substitute for professional medical advice or for direct diagnostic use. The tool is designed to provide insights into Polycystic Liver Disease (PLD) progression but is not meant to replace clinical decision-making or genetic consultation.</p>
+
+        <h3>Usage Guidelines:</h3>
+        <ul>
+          <li>The information provided by this application is not intended for medical diagnosis or treatment decisions without the oversight of qualified healthcare professionals.</li>
+          <li>Users are advised not to base any health-related decisions solely on the results obtained from this application.</li>
+          <li>The data and information presented are provided without any warranty of accuracy, completeness, or usefulness. Users should exercise their own judgment in the interpretation and use of the information.</li>
+        </ul>
+
+        <h3>Liability and Risk:</h3>
+        <p>The application is provided "as is," without any guarantees or obligations for support, updates, or accuracy. Under no circumstances shall the creators or affiliates of the PLD-Progression Grouper be liable for any direct, indirect, incidental, or consequential damages arising from the use of the application.</p>
+
+        <h3>Contact and Queries:</h3>
+        <p>For medical relevance of the application's content, please consult with a healthcare professional. For inquiries or feedback regarding the application, please contact <a href="mailto:info@pld-progression-grouper.org">info@pld-progression-grouper.org</a>.</p>
+
+        <h3>Acknowledgment and Consent:</h3>
+        <p>By using the PLD-Progression Grouper, you acknowledge having read, understood, and agreed to the terms stated in this disclaimer. If you do not agree to these terms, you should not use the application.</p>
+
+        <button @click="closeModal">I Acknowledge</button>
+      </div>
+    </div>
+
     <div class="header">
       <img src="logo.webp" alt="PLD-Progression Grouper Logo" class="app-logo">
       <h1 class="app-title">PLD-Progression Grouper</h1>
@@ -43,6 +70,14 @@ Chart.register(...registerables);
 
 export default {
   setup() {
+    // Modal visibility state
+    const showModal = ref(true);
+
+    // Close the modal
+    const closeModal = () => {
+      showModal.value = false;
+    };
+
     // Reactive references for form inputs and chart canvas
     const patientId = ref('');
     const age = ref(20);
@@ -189,6 +224,8 @@ export default {
 
     // Exposing variables and methods to the template
     return {
+      showModal,
+      closeModal,
       patientId,
       age,
       totalLiverVolume,
@@ -206,6 +243,26 @@ export default {
 <style>
 * {
   font-family: Arial, sans-serif;
+}
+
+.modal {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 5px;
+  max-width: 500px;
+  text-align: left;
 }
 
 .header {
