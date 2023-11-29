@@ -1,5 +1,11 @@
 
+<p align="center">
+    <img src="public/logo.png" alt="PLD-Progression Grouper logo" width="192" height="192">
+</p>
+
 # PLD-Progression Grouper
+
+Please explore the [PLD-Progression Grouper](https://halbritter-lab.github.io/pld-progression-grouper/) app hosted on GitHub pages.
 
 ## Introduction
 
@@ -33,14 +39,41 @@ The application is built using Vue.js and Chart.js, ensuring a responsive and in
 5. **Plot Point:** Click to add the data point to the chart.
 6. **Print and Download:** Use these options to print the page or download the chart.
 
+
 ## Limitations and Relevance
 
 While the tool is based on a large cohort study, it's important to acknowledge the limitations in generalizability due to the cohort size. The tool serves a research purpose, offering a new approach to understanding the progression of ADPLD and assisting in decision-making for individuals with PLD.
+
 
 ## Contributions
 
 This tool is an open-source project, and contributions are welcome. Whether it's feature enhancement, bug fixing, or improvements in the algorithm, your input is valuable.
 
+
 ## Copyright and license
 
-- All code from this project is licensed under the "MIT No Attribution" (MIT-0) License - see the LICENSE.md file for details.
+- All code from this project is licensed under the "MIT No Attribution" (MIT-0) License.  For more information, please refer to the [License](LICENSE.md) file.
+
+
+## Creators and contributors
+
+**Bernt Popp**
+
+- <https://twitter.com/berntpopp>
+- <https://github.com/berntpopp>
+- <https://orcid.org/0000-0002-3679-1081>
+- <https://scholar.google.com/citations?user=Uvhu3t0AAAAJ>
+
+**Ria Schönauer**
+
+- <https://orcid.org/0000-0001-7609-3061>
+
+**Jan Halbritter**
+
+- <https://github.com/halbrijp>
+- <https://orcid.org/0000-0002-1377-9880>
+- <https://scholar.google.com/citations?user=Jt1S5fkAAAAJ>
+
+## Contact
+
+If you have any questions, suggestions, or feedback, please feel free to [contact us](contact.md).
