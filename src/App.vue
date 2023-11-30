@@ -93,6 +93,9 @@
           <strong>PG1</strong><br />&lt;3.3%/y
         </div>
       </div>
+  
+      <!-- Documentation sentence with link -->
+      <p>For a detailed documentation of this tools and the methodology, please refer to the <a href="https://github.com/halbritter-lab/pld-progression-grouper" target="_blank">GitHub README</a>.</p>
 
     </div>
   </div>
