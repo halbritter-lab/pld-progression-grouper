@@ -72,6 +72,7 @@ This tool is an open-source project, and contributions are welcome. Whether it's
 
 **Ria Schönauer**
 
+- <https://github.com/RARSchoen>
 - <https://orcid.org/0000-0001-7609-3061>
 
 **Dana Sierks**
