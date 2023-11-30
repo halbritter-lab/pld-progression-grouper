@@ -30,16 +30,56 @@ The principle of the "PLD-Progression Grouper" tool has been first published in 
 
 The application is built using Vue.js and Chart.js, ensuring a responsive and interactive user experience. The layout is designed with controls and input fields on the left and the chart on the right, facilitating ease of use and clear data presentation.
 
-## Usage
+## Usage and application components
 
-1. **ID Input:** Enter the individual's ID for reference.
-2. **Age Input:** Input the individual's age.
-3. **Total Liver Volume Input:** Enter the total liver volume (TLV) in ml.
-4. **Normalized Total Liver Volume:** The app automatically calculates and displays the nTLV according to the formula: nTLV = TLV[ml]/850ml.
-5. **Liver Growth Rate:** The app automatically calculates and displays the LGR[%/y] according to the formula: LGR[%/y] = 100*ln(nTLV)/(age[y]-20y).    
-6. **Progression group:** The app automatically calculates and displays the PG.
-7. **Plot Point:** Click to add the data point to the chart.
-8. **Print and Download:** Use these options to print the page or download the chart.
+<p align="left">
+    <img src="public/pld-app_application-components.png" alt="PLD-Progression Grouper application components description" width="600">
+</p>
+
+1. **Application Header**
+   - **(1a) Logo**: Displays the logo of the PLD-Progression Grouper application.
+   - **(1b) Title**: Shows the name of the application.
+   - **(1c) Version Tag**: Indicates the current version of the application.
+
+2. **User Input Area**
+   - **(2a) ID Field**: Where users can enter a unique identifier for the data point they are entering or analyzing.
+   - **(2b) Age Input**: Users can input the age of the patient in years.
+   - **(2c) Total Liver Volume (TLV) Input**: Users can input the total liver volume measured in milliliters.
+
+3. **Computed Outputs**
+   - **(3a) Normalized Total Liver Volume (nTLV)**: This field displays the calculated normalized total liver volume based on the input TLV.
+   - **(3b) Progression Group (PG) Indicator**: Shows the progression group classification based on the computed nTLV and age.
+
+4. **Action Buttons**
+   - **(4a) Plot Point**: Submits the entered data and plots the point on the graph.
+   - **(4b) Print Page**: Allows the user to print the current page.
+   - **(4c) Download Plot**: Enables the user to download the displayed plot as an image.
+   - **(4d) Save (JSON)**: Saves the current data table into a JSON file.
+   - **(4e) Load (JSON)**: Loads data from a selected JSON file and updates the table and plot accordingly.
+   - **(4f) Download (Excel)**: Exports the data table into an Excel spreadsheet.
+
+5. **Chart Area**
+   - Displays a scatter plot graph illustrating the relationship between age and nTLV, with trend lines indicating progression thresholds.
+
+6. **Progression Group Legend**
+   - **(6a) PG3**: Indicates rapid progression (greater than 6.6% per year).
+   - **(6b) PG2**: Indicates moderate progression (between 3.3% and 6.6% per year).
+   - **(6c) PG1**: Indicates slow progression (less than 3.3% per year).
+
+7. **Documentation Link**
+   - Provides a link to the GitHub README for detailed documentation of the application and its methodologies.
+
+8. **Citation Information**
+   - Contains bibliographic information to cite when using the application for research or publication purposes.
+
+9. **Footer**
+   - **(9a) Institution Logo**: Shows the logo of the associated medical institution.
+   - **(9b) Funder Logo**: Displays the logo of the funding organization.
+
+10. **Data Table** *(not visible in the screenshot)*
+   - If present, this would display a table of all data points entered, including ID, age, TLV, nTLV, progression group, and an option to remove data points.
+
+Each numbered item refers to a different component or section of the app. Users interact with these components to input data, receive computed outputs, manage the data points, and utilize the results for further analysis or documentation.
 
 
 ## Limitations and Relevance
