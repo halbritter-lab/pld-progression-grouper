@@ -35,8 +35,8 @@ The application is built using Vue.js and Chart.js, ensuring a responsive and in
 1. **ID Input:** Enter the individual's ID for reference.
 2. **Age Input:** Input the individual's age.
 3. **Total Liver Volume Input:** Enter the total liver volume (TLV) in ml.
-4. **Normalized Total Liver Volume:** The app automatically calculates and displays the nTLV.
-5. **Liver Growth Rate:** The app automatically calculates and displays the LGR [%/y].
+4. **Normalized Total Liver Volume:** The app automatically calculates and displays the nTLV according to the formula: nTLV = TLV[ml]/850ml.
+5. **Liver Growth Rate:** The app automatically calculates and displays the LGR[%/y] according to the formula: LGR[%/y] = 100*ln(nTLV)/(age[y]-20y).    
 6. **Progression group:** The app automatically calculates and displays the PG.
 7. **Plot Point:** Click to add the data point to the chart.
 8. **Print and Download:** Use these options to print the page or download the chart.
