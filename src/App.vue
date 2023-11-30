@@ -104,8 +104,17 @@
         </a> <br />
         A new manuscript reporting the application of this method in autosomal dominant polycystic liver disease is currently under review. A link will be provided here upon publication.
       </p>
-
     </div>
+
+    <!-- Footer section with institution and funder logos -->
+    <footer class="footer">
+      <a href="https://nephrologie-intensivmedizin.charite.de/fuer_patienten/cerkid//" target="_blank">
+        <img src="/CeRKiD_175x130.jpg" alt="CeRKiD Logo" class="institution-logo">
+      </a>
+      <a href="https://www.dfg.de/en/" target="_blank">
+        <img src="/dfg_logo_schriftzug_schwarz_foerderung_en.gif" alt="DFG Logo" class="funder-logo">
+      </a>
+    </footer>
   </div>
 </template>
 
@@ -528,5 +537,20 @@ button {
   padding: 10px 15px; /* Padding inside buttons */
   font-size: 16px; /* Font size */
   cursor: pointer; /* Pointer cursor on hover */
+}
+
+/* Styles for the footer */
+.footer {
+  padding: 10px 0;
+  background-color: #f5f5f5; /* Light grey background */
+  display: flex;
+  justify-content: center; /* Center logos horizontally */
+  align-items: center; /* Center logos vertically */
+}
+
+/* Styles for the institution and funder logos */
+.institution-logo, .funder-logo {
+  max-width: 120px; /* Maximum width for logos */
+  margin: 0 20px; /* Spacing between logos */
 }
 </style>
