@@ -130,6 +130,20 @@
         <button @click="downloadChart">
           Download Plot
         </button>
+
+        <!-- Buttons for saving and loading -->
+        <button @click="saveDataAsJson">
+          Save (JSON)
+        </button>
+        <input
+          ref="fileInput"
+          type="file"
+          style="display: none;"
+          @change="loadDataFromJson"
+        >
+        <button @click="triggerFileInput">
+          Load (JSON)
+        </button>
       </div>
 
       <!-- Container for the chart visualization -->
@@ -179,7 +193,9 @@
               <td>{{ point.pg }}</td>
               <td>{{ point.lgr }}</td>
               <td>
-                <button @click="removeDataPoint(index)">-</button> <!-- Remove button -->
+                <button @click="removeDataPoint(index)">
+                  -
+                </button> <!-- Remove button -->
               </td>
             </tr>
           </tbody>
@@ -480,7 +496,50 @@ export default {
       link.download = 'plot.png';
       link.click();
     };
-    
+
+    // Method to save the data points as a JSON file
+    const saveDataAsJson = () => {
+      const dataStr = JSON.stringify(dataPoints.value);
+      const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
+
+      const exportFileDefaultName = 'data.json';
+      const linkElement = document.createElement('a');
+      linkElement.setAttribute('href', dataUri);
+      linkElement.setAttribute('download', exportFileDefaultName);
+      linkElement.click();
+    };
+
+    // Create a ref
+    const fileInput = ref(null);
+
+    const triggerFileInput = () => {
+      if (fileInput.value) {
+        fileInput.value.click();
+      }
+    };
+
+    // Method to load data points from a JSON file
+    const loadDataFromJson = async (event) => {
+      const file = event.target.files[0];
+      if (!file) {
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const fileData = JSON.parse(e.target.result);
+        dataPoints.value.push(...fileData);
+        fileData.forEach((data) => {
+          chart.data.datasets[0].data.push({
+            x: data.age,
+            y: data.ntlv
+          });
+        });
+        chart.update();
+      };
+      reader.readAsText(file);
+    };
+
     // Update or create meta tags dynamically
     function updateMetaTag(name, content) {
       let tag = document.querySelector(`meta[name="${name}"]`);
@@ -542,7 +601,11 @@ export default {
       removeDataPoint,
       chartCanvas,
       printPage,
-      downloadChart
+      downloadChart,
+      fileInput,
+      triggerFileInput,
+      saveDataAsJson,
+      loadDataFromJson,
     };
   }
 };
@@ -775,6 +838,23 @@ button {
 
 .data-points-table button:hover {
   background-color: #ff3333; /* Darker red on hover */
+}
+
+/* Styles for the controls section */
+.controls button {
+  /* Styling for the buttons */
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  padding: 10px 15px;
+  margin: 5px;
+}
+
+/* Hover styles for the buttons */
+.controls button:hover {
+  background-color: #45a049;
 }
 
 /* Styles for the warning message */
