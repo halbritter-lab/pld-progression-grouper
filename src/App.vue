@@ -257,12 +257,23 @@ export default {
   justify-content: center;
 }
 
+/* Responsive adjustments for smaller screens */
+@media (max-width: 600px) {
+  .modal-content {
+    max-width: 100%; /* Use full width for very small screens */
+    padding: 10px; /* Reduce padding on smaller screens */
+  }
+}
+
 .modal-content {
   background-color: white;
   padding: 20px;
   border-radius: 5px;
   max-width: 500px;
+  width: 90%; /* Adjust width to be responsive */
   text-align: left;
+  overflow-y: auto; /* Allows scrolling if the content is too long */
+  max-height: 90%; /* Limits the height */
 }
 
 .header {
