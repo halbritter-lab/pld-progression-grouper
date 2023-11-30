@@ -50,6 +50,12 @@ While the tool is based on a large cohort study, it's important to acknowledge t
 This tool is an open-source project, and contributions are welcome. Whether it's feature enhancement, bug fixing, or improvements in the algorithm, your input is valuable.
 
 
+## Citation policy
+
+- Please cite the following publication for this tool: [ Sierks D, et al. Modelling polycystic liver disease progression using age-adjusted liver volumes and targeted mutational analysis. JHEP Rep. 2022.](https://pubmed.ncbi.nlm.nih.gov/36246085/)
+- A new manuscript reporting the application of this method in autosomal dominant polycystic liver disease is currently under review. A link will be provided here upon publication.
+
+
 ## Copyright and license
 
 - All code from this project is licensed under the "MIT No Attribution" (MIT-0) License.  For more information, please refer to the [License](LICENSE.md) file.

@@ -97,6 +97,14 @@
       <!-- Documentation sentence with link -->
       <p>For a detailed documentation of this tools and the methodology, please refer to the <a href="https://github.com/halbritter-lab/pld-progression-grouper" target="_blank">GitHub README</a>.</p>
 
+      <!-- Citation policy sentences with links -->
+      <p>Please cite the following publication for this tool: 
+        <a href="https://pubmed.ncbi.nlm.nih.gov/36246085/" target="_blank">
+          Sierks D, et al. Modelling polycystic liver disease progression using age-adjusted liver volumes and targeted mutational analysis. JHEP Rep. 2022.
+        </a> <br />
+        A new manuscript reporting the application of this method in autosomal dominant polycystic liver disease is currently under review. A link will be provided here upon publication.
+      </p>
+
     </div>
   </div>
 </template>
