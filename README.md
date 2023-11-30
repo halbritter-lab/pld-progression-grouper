@@ -16,7 +16,7 @@ PLD, characterized by numerous fluid-filled cysts arising from intrahepatic bili
 
 ## References
 
-The pronciple of the "PLD-Progression Grouper" tool has been first published in 2022, highlighting its application in the study of PLD within the context of both Autosomal Dominant Polycystic Kidney Disease (ADPKD) and Autosomal Dominant Polycystic Liver Disease (ADPLD). This underscores the tool's relevance and adaptability for assessing PLD progression not only in isolated cases but also when it occurs in conjunction with ADPKD. For more details on the publication, see [PMID:36246085](https://pubmed.ncbi.nlm.nih.gov/36246085/).
+The principle of the "PLD-Progression Grouper" tool has been first published in 2022, highlighting its application in the study of PLD within the context of both Autosomal Dominant Polycystic Kidney Disease (ADPKD) and Autosomal Dominant Polycystic Liver Disease (ADPLD). This underscores the tool's relevance and adaptability for assessing PLD progression not only in isolated cases but also when it occurs in conjunction with ADPKD. For more details on the publication, see [PMID:36246085](https://pubmed.ncbi.nlm.nih.gov/36246085/).
 
 
 ## Features
@@ -36,8 +36,10 @@ The application is built using Vue.js and Chart.js, ensuring a responsive and in
 2. **Age Input:** Input the individual's age.
 3. **Total Liver Volume Input:** Enter the total liver volume (TLV) in ml.
 4. **Normalized Total Liver Volume:** The app automatically calculates and displays the nTLV.
-5. **Plot Point:** Click to add the data point to the chart.
-6. **Print and Download:** Use these options to print the page or download the chart.
+5. **Liver Growth Rate:** The app automatically calculates and displays the LGR [%/y].
+6. **Progression group:** The app automatically calculates and displays the PG.
+7. **Plot Point:** Click to add the data point to the chart.
+8. **Print and Download:** Use these options to print the page or download the chart.
 
 
 ## Limitations and Relevance
@@ -72,10 +74,11 @@ This tool is an open-source project, and contributions are welcome. Whether it's
 
 **Ria Schönauer**
 
+- <https://github.com/RARSchoen>
 - <https://orcid.org/0000-0001-7609-3061>
 
 **Dana Sierks**
-
+- <https://github.com/SIERKSd>
 - <https://orcid.org/0000-0002-3850-7646>
 
 
