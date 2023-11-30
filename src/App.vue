@@ -54,6 +54,14 @@
 
     <!-- Main content area -->
     <div class="content">
+      <!-- Warning message for ID -->
+      <div
+        v-if="idWarningMessage"
+        class="id-warning-message"
+      >
+        {{ idWarningMessage }}
+      </div>
+
       <!-- Control section for user inputs -->
       <div class="controls">
         <!-- Individual input groups for different parameters -->
@@ -229,6 +237,9 @@ export default {
     // Extract the version from the package.json
     const version = packageInfo.version;
 
+    // Warning message for missing ID
+    const idWarningMessage = ref('');
+
     // Modal visibility state
     const showModal = ref(true);
 
@@ -275,6 +286,11 @@ export default {
 
     // Modify the addDataPoint method
     const addDataPoint = () => {
+      if (!patientId.value.trim()) {
+        idWarningMessage.value = "Please enter an ID before plotting a point.";
+        return;
+      }
+
       const newData = {
         id: patientId.value,
         age: age.value,
@@ -288,6 +304,9 @@ export default {
         y: normalizedTLV.value,
       });
       chart.update();
+
+      // Reset the warning message if the data point is successfully added
+      idWarningMessage.value = '';
     };
 
     // Method to handle window resize
@@ -453,6 +472,7 @@ export default {
     // Exposing variables and methods to the template
     return {
       version,
+      idWarningMessage,
       showModal,
       closeModal,
       dataPoints,
@@ -684,5 +704,12 @@ button {
 
 .data-points-table td {
   background-color: #fff; /* White background for cells */
+}
+
+/* Styles for the warning message */
+.id-warning-message {
+  color: red; /* Choose a color that stands out */
+  margin: 10px 0;
+  font-weight: bold;
 }
 </style>
