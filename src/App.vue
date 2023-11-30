@@ -164,6 +164,7 @@
               <th>nTLV</th>
               <th>PG</th>
               <th>LGR [%/y]</th>
+              <th>Remove</th>
             </tr>
           </thead>
           <tbody>
@@ -177,6 +178,9 @@
               <td>{{ point.ntlv }}</td>
               <td>{{ point.pg }}</td>
               <td>{{ point.lgr }}</td>
+              <td>
+                <button @click="removeDataPoint(index)">-</button> <!-- Remove button -->
+              </td>
             </tr>
           </tbody>
         </table>
@@ -314,10 +318,10 @@ export default {
       return null; // Return null if the calculation can't be performed
     });
 
-    // At the top of your setup() function, add a new reactive reference for the data points array
+    // Reactive reference for the data points array
     const dataPoints = ref([]);
 
-    // Modify the addDataPoint method
+    // addDataPoint method to add a new data point to the chart
     const addDataPoint = () => {
       if (!patientId.value.trim()) {
         idWarningMessage.value = "Please enter an ID before plotting a point.";
@@ -344,6 +348,17 @@ export default {
 
       // Reset the warning message if the data point is successfully added
       idWarningMessage.value = '';
+    };
+
+    const removeDataPoint = (index) => {
+      // Remove from dataPoints array
+      dataPoints.value.splice(index, 1);
+
+      // Remove from chart's dataset and update the chart
+      if (chart && chart.data.datasets.length > 0) {
+        chart.data.datasets[0].data.splice(index, 1);
+        chart.update();
+      }
     };
 
     // Method to handle window resize
@@ -524,6 +539,7 @@ export default {
       progressionGroup,
       liverGrowthRate,
       addDataPoint,
+      removeDataPoint,
       chartCanvas,
       printPage,
       downloadChart
@@ -745,6 +761,20 @@ button {
 
 .data-points-table td {
   background-color: #fff; /* White background for cells */
+}
+
+/* Styles for the remove button */
+.data-points-table button {
+  background-color: #ff4d4d; /* Red background */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  padding: 5px 10px;
+}
+
+.data-points-table button:hover {
+  background-color: #ff3333; /* Darker red on hover */
 }
 
 /* Styles for the warning message */
