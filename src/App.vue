@@ -48,7 +48,7 @@
         class="app-logo"
       >
       <h1 class="app-title">
-        PLD-Progression Grouper <span class="app-version">v{{ version }}</span>
+        PLD-Progression Grouper <span class="app-version">v{{ version }}-{{ lastCommitHash }}</span>
       </h1>
     </div>
 
@@ -75,7 +75,7 @@
           >
         </div>
         <div class="input-group">
-          <label for="ageInput">Age:</label>
+          <label for="ageInput">Age [y]:</label>
           <input
             id="ageInput"
             v-model="age"
@@ -159,7 +159,7 @@
           <thead>
             <tr>
               <th>ID</th>
-              <th>Age</th>
+              <th>Age [y]</th>
               <th>TLV [ml]</th>
               <th>nTLV</th>
               <th>PG</th>
@@ -244,6 +244,22 @@ export default {
   setup() {
     // Extract the version from the package.json
     const version = packageInfo.version;
+
+    // Reference for the last commit hash
+    const lastCommitHash = ref('');
+
+    // Fetch the last commit hash
+    const fetchLastCommit = async () => {
+      try {
+        const response = await fetch('https://api.github.com/repos/halbritter-lab/pld-progression-grouper/commits?per_page=1');
+        const commits = await response.json();
+        if (commits.length) {
+          lastCommitHash.value = commits[0].sha.substring(0, 7); // Gets first 7 characters of the commit hash
+        }
+      } catch (error) {
+        console.error('Error fetching last commit:', error);
+      }
+    };
 
     // Warning message for missing ID
     const idWarningMessage = ref('');
@@ -466,9 +482,8 @@ export default {
     // Lifecycle hook to set up the chart after the component is mounted
     // Update meta tags and initialize chart on component mount
     onMounted(() => {
-      // Initialize the chart
-      setupChart();
-      window.addEventListener('resize', handleResize);
+      // Fetch the last commit hash
+      fetchLastCommit();
 
       // Update page title
       document.title = 'PLD-Progression Grouper';
@@ -483,6 +498,9 @@ export default {
       updateMetaTag('author', 'Bernt Popp, Ria Schönauer, Dana Sierks, Jan Halbritter');
       updateMetaTag('creator', 'Bernt Popp, Ria Schönauer, Dana Sierks, Jan Halbritter');
 
+      // Initialize the chart
+      setupChart();
+      window.addEventListener('resize', handleResize);
     });
 
     // Lifecycle hook to remove event listeners when the component is unmounted
@@ -493,6 +511,7 @@ export default {
     // Exposing variables and methods to the template
     return {
       version,
+      lastCommitHash,
       idWarningMessage,
       showModal,
       closeModal,
