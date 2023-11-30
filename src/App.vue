@@ -111,6 +111,12 @@
             >
               {{ progressionGroup }}
             </output>
+            <output
+              id="liverGrowthRateOutput"
+              :class="`progression-group-output ${progressionGroup}`"
+            >
+              {{ liverGrowthRate !== null ? liverGrowthRate.toFixed(2) + ' %/y (LGR)' : '' }}
+            </output>
           </div>
         </div>
 
@@ -157,6 +163,7 @@
               <th>TLV [ml]</th>
               <th>nTLV</th>
               <th>PG</th>
+              <th>LGR [%/y]</th>
             </tr>
           </thead>
           <tbody>
@@ -169,6 +176,7 @@
               <td>{{ point.tlv }}</td>
               <td>{{ point.ntlv }}</td>
               <td>{{ point.pg }}</td>
+              <td>{{ point.lgr }}</td>
             </tr>
           </tbody>
         </table>
@@ -281,6 +289,15 @@ export default {
       return 'PG1';
     });
 
+    // Computed property for liver growth rate (LGR)
+    const liverGrowthRate = computed(() => {
+      // Check if age and normalizedTLV are defined and valid
+      if (age.value && normalizedTLV.value && age.value > 20) {
+        return 100 * Math.log(normalizedTLV.value) / (age.value - 20);
+      }
+      return null; // Return null if the calculation can't be performed
+    });
+
     // At the top of your setup() function, add a new reactive reference for the data points array
     const dataPoints = ref([]);
 
@@ -296,13 +313,17 @@ export default {
         age: age.value,
         tlv: totalLiverVolume.value,
         ntlv: formattedNormalizedTLV.value,
-        pg: progressionGroup.value
+        pg: progressionGroup.value,
+        lgr: liverGrowthRate.value !== null ? liverGrowthRate.value.toFixed(2) : 'N/A' // Handle undefined LGR
       };
+
       dataPoints.value.push(newData);
+
       chart.data.datasets[0].data.push({
         x: newData.age,
         y: normalizedTLV.value,
       });
+
       chart.update();
 
       // Reset the warning message if the data point is successfully added
@@ -482,6 +503,7 @@ export default {
       normalizedTLV,
       formattedNormalizedTLV,
       progressionGroup,
+      liverGrowthRate,
       addDataPoint,
       chartCanvas,
       printPage,
