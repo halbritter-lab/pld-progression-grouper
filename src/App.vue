@@ -121,12 +121,15 @@
         </div>
 
         <!-- Buttons for user actions -->
+        <!-- Button for plotting the data point -->
         <button @click="addDataPoint">
           Plot Point
         </button>
+        <!-- Button for printing the page -->
         <button @click="printPage">
           Print Page
         </button>
+        <!-- Button for downloading the chart as an image -->
         <button @click="downloadChart">
           Download Plot
         </button>
@@ -135,14 +138,20 @@
         <button @click="saveDataAsJson">
           Save (JSON)
         </button>
+        <!-- invisible file input element -->
         <input
           ref="fileInput"
           type="file"
           style="display: none;"
           @change="loadDataFromJson"
         >
+        <!-- Button for triggering the file input -->
         <button @click="triggerFileInput">
           Load (JSON)
+        </button>
+        <!-- Button for downloading data as Excel -->
+        <button @click="downloadDataAsExcel">
+          Download (Excel)
         </button>
       </div>
 
@@ -251,8 +260,14 @@
 
 
 <script>
+// import the necessary components from Vue.js
 import { ref, onMounted, onUnmounted, computed } from 'vue';
+
+// import the necessary components from Chart.js
 import { Chart, registerables } from 'chart.js';
+
+// Import the XLSX library
+import * as XLSX from 'xlsx';
 
 // Import the package.json file
 import packageInfo from '../package.json'; // Adjust the path to your package.json file
@@ -551,7 +566,17 @@ export default {
         tag.setAttribute('content', content);
         document.head.appendChild(tag);
       }
-    }
+    };
+
+    // Method to download data as Excel
+    const downloadDataAsExcel = () => {
+      const wb = XLSX.utils.book_new(); // create a new workbook
+      const ws = XLSX.utils.json_to_sheet(dataPoints.value); // convert data to worksheet
+
+      XLSX.utils.book_append_sheet(wb, ws, "Data"); // append worksheet to workbook
+
+      XLSX.writeFile(wb, "Data.xlsx"); // write workbook and download
+    };
 
     // Lifecycle hook to set up the chart after the component is mounted
     // Update meta tags and initialize chart on component mount
@@ -606,6 +631,7 @@ export default {
       triggerFileInput,
       saveDataAsJson,
       loadDataFromJson,
+      downloadDataAsExcel,
     };
   }
 };
