@@ -218,9 +218,35 @@ export default {
       link.download = 'plot.png';
       link.click();
     };
+    
+    // Reusable function to update or create meta tags
+    function updateMetaTag(name, content) {
+      let tag = document.querySelector(`meta[name="${name}"]`);
+      if (tag) {
+        tag.setAttribute('content', content);
+      } else {
+        tag = document.createElement('meta');
+        tag.setAttribute('name', name);
+        tag.setAttribute('content', content);
+        document.head.appendChild(tag);
+      }
+    }
 
     // Lifecycle hook to set up the chart after the component is mounted
-    onMounted(setupChart);
+    // Update meta tags and initialize chart on component mount
+    onMounted(() => {
+      setupChart();
+
+      document.title = 'PLD-Progression Grouper'; // Update page title
+
+      // Update meta description
+      updateMetaTag('description', 'PLD-Progression Grouper is a Vue.js web application, based on extensive research, offering insights into Polycystic Liver Disease (PLD) progression. Developed by Bernt Popp, Ria Schönauer, Dana Sierks, and Jan Halbritter, this tool facilitates understanding of PLD for both educational and research purposes.');
+
+      // Add author meta tags
+      updateMetaTag('author', 'Bernt Popp, Ria Schönauer, Dana Sierks, Jan Halbritter');
+      updateMetaTag('creator', 'Bernt Popp, Ria Schönauer, Dana Sierks, Jan Halbritter');
+
+    });
 
     // Exposing variables and methods to the template
     return {
