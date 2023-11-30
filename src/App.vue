@@ -1,9 +1,14 @@
 <template>
+  <!-- Main application container -->
   <div id="app" class="container">
+
+    <!-- Modal for displaying the disclaimer -->
+    <!-- It appears conditionally based on the showModal reactive property -->
     <div v-if="showModal" class="modal">
       <div class="modal-content">
         <h2>Disclaimer for PLD-Progression Grouper</h2>
         
+        <!-- Sections of the disclaimer with various headings and paragraphs -->
         <h3>Important Information for All Users:</h3>
         <p>The "PLD-Progression Grouper" application is intended for informational, educational and research purposes only and should not be used as a substitute for professional medical advice or for direct diagnostic use. The tool is designed to provide insights into Polycystic Liver Disease (PLD) progression but is not meant to replace clinical decision-making or genetic consultation.</p>
 
@@ -23,16 +28,22 @@
         <h3>Acknowledgment and Consent:</h3>
         <p>By using the PLD-Progression Grouper, you acknowledge having read, understood, and agreed to the terms stated in this disclaimer. If you do not agree to these terms, you should not use the application.</p>
 
+        <!-- Button to close the modal -->
         <button @click="closeModal">I Acknowledge</button>
       </div>
     </div>
 
+    <!-- Header section with logo and application title -->
     <div class="header">
       <img src="logo.webp" alt="PLD-Progression Grouper Logo" class="app-logo">
       <h1 class="app-title">PLD-Progression Grouper</h1>
     </div>
+
+    <!-- Main content area -->
     <div class="content">
+      <!-- Control section for user inputs -->
       <div class="controls">
+        <!-- Individual input groups for different parameters -->
         <div class="input-group">
           <label for="idInput">ID:</label>
           <input type="text" id="idInput" v-model="patientId" placeholder="Enter ID" />
@@ -49,10 +60,14 @@
           <label for="normalizedTLV">Normalized Total Liver Volume (nTLV):</label>
           <output id="normalizedTLV" class="output-field">{{ formattedNormalizedTLV }}</output>
         </div>
+
+        <!-- Buttons for user actions -->
         <button @click="addDataPoint">Plot Point</button>
         <button @click="printPage">Print Page</button>
         <button @click="downloadChart">Download Plot</button>
       </div>
+
+      <!-- Container for the chart visualization -->
       <div class="chart-container">
         <canvas ref="chartCanvas"></canvas>
       </div>
@@ -219,7 +234,7 @@ export default {
       link.click();
     };
     
-    // Reusable function to update or create meta tags
+    // Update or create meta tags dynamically
     function updateMetaTag(name, content) {
       let tag = document.querySelector(`meta[name="${name}"]`);
       if (tag) {
@@ -269,100 +284,114 @@ export default {
 };
 </script>
 
+
 <style>
+/* Global font style for the entire application */
 * {
   font-family: Arial, sans-serif;
 }
 
+/* Styles for the modal background, making it fixed and covering the entire screen */
 .modal {
   position: fixed;
   left: 0;
   top: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: center; /* Centering the modal content */
 }
 
-/* Responsive adjustments for smaller screens */
+/* Responsive design adjustments for the modal on smaller screens */
 @media (max-width: 600px) {
   .modal-content {
-    max-width: 100%; /* Use full width for very small screens */
-    padding: 10px; /* Reduce padding on smaller screens */
+    max-width: 100%; /* Full width for small screens */
+    padding: 10px; /* Reduced padding for small screens */
   }
 }
 
+/* Styles for the content within the modal */
 .modal-content {
   background-color: white;
   padding: 20px;
   border-radius: 5px;
-  max-width: 500px;
-  width: 90%; /* Adjust width to be responsive */
+  max-width: 500px; /* Maximum width of modal */
+  width: 90%; /* Responsive width */
   text-align: left;
-  overflow-y: auto; /* Allows scrolling if the content is too long */
-  max-height: 90%; /* Limits the height */
+  overflow-y: auto; /* Enable scrolling for long content */
+  max-height: 90%; /* Maximum height */
 }
 
+/* Styling for the header section containing the logo and title */
 .header {
   display: flex;
   align-items: center;
-  justify-content: center; /* Centers the content horizontally */
+  justify-content: center; /* Centering content horizontally */
   text-align: center;
-  width: 100%; /* Ensure the header takes full width */
+  width: 100%; /* Full width */
 }
 
+/* Styles for the application logo */
 .app-logo {
-  max-width: 92px; /* Adjust size as needed */
+  max-width: 92px; /* Fixed maximum width */
   margin-right: 20px; /* Spacing between logo and title */
 }
 
+/* Styling for the application title */
 .app-title {
   font-size: 24px;
   font-weight: bold;
-  margin: 0; /* Remove default margin */
+  margin: 0; /* Removing default margin */
 }
 
+/* Container for the whole application */
 .container {
   text-align: center;
-  max-width: 800px;
-  margin: auto;
+  max-width: 800px; /* Maximum width */
+  margin: auto; /* Centering the container */
 }
 
+/* Styles for input groups */
 .input-group {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  margin: 10px 0;
+  align-items: center; /* Centering items vertically */
+  margin: 10px 0; /* Spacing between groups */
 }
 
+/* Label styles within input groups */
 .input-group label {
-  margin-bottom: 5px;
+  margin-bottom: 5px; /* Spacing below each label */
 }
 
+/* Container for the chart */
 .chart-container {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: 20px;
+  justify-content: center; /* Centering the chart horizontally */
+  align-items: center; /* Centering the chart vertically */
+  margin-top: 20px; /* Spacing above the chart */
 }
 
+/* Styles for the canvas element (used by Chart.js) */
 canvas {
-  max-width: 100%;
-  height: auto;
+  max-width: 100%; /* Responsive width */
+  height: auto; /* Maintain aspect ratio */
 }
 
+/* Styling for buttons */
 button {
-  margin: 5px;
-  padding: 10px 15px;
-  font-size: 16px;
-  cursor: pointer;
+  margin: 5px; /* Spacing around buttons */
+  padding: 10px 15px; /* Padding inside buttons */
+  font-size: 16px; /* Font size */
+  cursor: pointer; /* Pointer cursor on hover */
 }
 
+/* Styling for the output field displaying normalized TLV */
 .output-field {
   border: 1px solid #ccc; /* Gray border */
-  padding: 5px;
+  padding: 5px; /* Padding inside the field */
   border-radius: 5px; /* Rounded corners */
 }
 </style>
