@@ -136,6 +136,36 @@
         </div>
       </div>
   
+      <!-- Table to display the data points -->
+      <div
+        v-if="dataPoints.length > 0"
+        class="data-points-table-container"
+      >
+        <table class="data-points-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Age</th>
+              <th>TLV [ml]</th>
+              <th>nTLV</th>
+              <th>PG</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              v-for="point in dataPoints"
+              :key="point.id"
+            >
+              <td>{{ point.id }}</td>
+              <td>{{ point.age }}</td>
+              <td>{{ point.tlv }}</td>
+              <td>{{ point.ntlv }}</td>
+              <td>{{ point.pg }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
       <!-- Documentation sentence with link -->
       <p>
         For a detailed documentation of this tools and the methodology, please refer to the <a
@@ -240,14 +270,23 @@ export default {
       return 'PG1';
     });
 
-    // Method to add a new data point to the chart
+    // At the top of your setup() function, add a new reactive reference for the data points array
+    const dataPoints = ref([]);
+
+    // Modify the addDataPoint method
     const addDataPoint = () => {
       const newData = {
-        x: age.value,
-        y: normalizedTLV.value, // Use normalized value for plotting
-        id: patientId.value // Include the ID in the point data for the tooltip
+        id: patientId.value,
+        age: age.value,
+        tlv: totalLiverVolume.value,
+        ntlv: formattedNormalizedTLV.value,
+        pg: progressionGroup.value
       };
-      chart.data.datasets[0].data.push(newData);
+      dataPoints.value.push(newData);
+      chart.data.datasets[0].data.push({
+        x: newData.age,
+        y: normalizedTLV.value,
+      });
       chart.update();
     };
 
@@ -416,6 +455,7 @@ export default {
       version,
       showModal,
       closeModal,
+      dataPoints,
       patientId,
       age,
       totalLiverVolume,
@@ -617,5 +657,32 @@ button {
 .institution-logo, .funder-logo {
   max-width: 120px; /* Maximum width for logos */
   margin: 0 20px; /* Spacing between logos */
+}
+
+/* Styles for the data points table */
+.data-points-table-container {
+  margin-top: 20px; /* Space from the chart */
+}
+
+.data-points-table {
+  width: 100%;
+  border-collapse: collapse; /* Remove space between borders */
+  margin-bottom: 20px; /* Space before the footer or next content */
+}
+
+.data-points-table th,
+.data-points-table td {
+  border: 1px solid #ddd; /* Light grey border */
+  padding: 8px; /* Padding within cells */
+  text-align: left; /* Align text to the left */
+}
+
+.data-points-table th {
+  background-color: #f5f5f5; /* Light grey background for header */
+  font-weight: bold; /* Make header text bold */
+}
+
+.data-points-table td {
+  background-color: #fff; /* White background for cells */
 }
 </style>
