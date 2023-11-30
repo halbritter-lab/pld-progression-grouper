@@ -77,7 +77,7 @@
 
 
 <script>
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, onUnmounted, computed } from 'vue';
 import { Chart, registerables } from 'chart.js';
 
 // Register the necessary components for Chart.js
@@ -119,6 +119,13 @@ export default {
       };
       chart.data.datasets[0].data.push(newData);
       chart.update();
+    };
+
+    // Method to handle window resize
+    const handleResize = () => {
+      if (chart) {
+        chart.resize();
+      }
     };
 
     // Method to set up the chart
@@ -250,9 +257,12 @@ export default {
     // Lifecycle hook to set up the chart after the component is mounted
     // Update meta tags and initialize chart on component mount
     onMounted(() => {
+      // Initialize the chart
       setupChart();
+      window.addEventListener('resize', handleResize);
 
-      document.title = 'PLD-Progression Grouper'; // Update page title
+      // Update page title
+      document.title = 'PLD-Progression Grouper';
 
       // Update meta description
       updateMetaTag('description', 'PLD-Progression Grouper is a Vue.js web application, based on extensive research, offering insights into Polycystic Liver Disease (PLD) progression. Developed by Bernt Popp, Ria Schönauer, Dana Sierks, and Jan Halbritter, this tool facilitates understanding of PLD for both educational and research purposes.');
@@ -264,6 +274,11 @@ export default {
       updateMetaTag('author', 'Bernt Popp, Ria Schönauer, Dana Sierks, Jan Halbritter');
       updateMetaTag('creator', 'Bernt Popp, Ria Schönauer, Dana Sierks, Jan Halbritter');
 
+    });
+
+    // Lifecycle hook to remove event listeners when the component is unmounted
+    onUnmounted(() => {
+      window.removeEventListener('resize', handleResize);
     });
 
     // Exposing variables and methods to the template
