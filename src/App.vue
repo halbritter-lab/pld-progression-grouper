@@ -36,7 +36,7 @@
     <!-- Header section with logo and application title -->
     <div class="header">
       <img src="logo.webp" alt="PLD-Progression Grouper Logo" class="app-logo">
-      <h1 class="app-title">PLD-Progression Grouper</h1>
+      <h1 class="app-title">PLD-Progression Grouper <span class="app-version">v{{ version }}</span></h1>
     </div>
 
     <!-- Main content area -->
@@ -93,6 +93,7 @@
           <strong>PG1</strong><br />&lt;3.3%/y
         </div>
       </div>
+
     </div>
   </div>
 </template>
@@ -102,11 +103,17 @@
 import { ref, onMounted, onUnmounted, computed } from 'vue';
 import { Chart, registerables } from 'chart.js';
 
+// Import the package.json file
+import packageInfo from '../package.json'; // Adjust the path to your package.json file
+
 // Register the necessary components for Chart.js
 Chart.register(...registerables);
 
 export default {
   setup() {
+    // Extract the version from the package.json
+    const version = packageInfo.version;
+
     // Modal visibility state
     const showModal = ref(true);
 
@@ -321,6 +328,7 @@ export default {
 
     // Exposing variables and methods to the template
     return {
+      version,
       showModal,
       closeModal,
       patientId,
@@ -343,6 +351,14 @@ export default {
 /* Global font style for the entire application */
 * {
   font-family: Arial, sans-serif;
+}
+
+/* Styles for the version number */
+.app-version {
+  font-size: 0.8em; /* Smaller font size */
+  color: #666; /* Lighter text color */
+  font-weight: normal; /* Less emphasis compared to the title */
+  padding-left: 10px; /* Space between title and version number */
 }
 
 /* Styles for the modal background, making it fixed and covering the entire screen */
