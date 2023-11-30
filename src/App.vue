@@ -213,7 +213,7 @@
 
       <!-- Documentation sentence with link -->
       <p>
-        For a detailed documentation of this tools and the methodology, please refer to the <a
+        For a detailed documentation of this tool and the methodology, please refer to the <a
           href="https://github.com/halbritter-lab/pld-progression-grouper"
           target="_blank"
         >GitHub README</a>.
