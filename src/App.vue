@@ -1,10 +1,15 @@
 <template>
   <!-- Main application container -->
-  <div id="app" class="container">
-
+  <div
+    id="app"
+    class="container"
+  >
     <!-- Modal for displaying the disclaimer -->
     <!-- It appears conditionally based on the showModal reactive property -->
-    <div v-if="showModal" class="modal">
+    <div
+      v-if="showModal"
+      class="modal"
+    >
       <div class="modal-content">
         <h2>Disclaimer for PLD-Progression Grouper</h2>
         
@@ -29,14 +34,22 @@
         <p>By using the PLD-Progression Grouper, you acknowledge having read, understood, and agreed to the terms stated in this disclaimer. If you do not agree to these terms, you should not use the application.</p>
 
         <!-- Button to close the modal -->
-        <button @click="closeModal">I Acknowledge</button>
+        <button @click="closeModal">
+          I Acknowledge
+        </button>
       </div>
     </div>
 
     <!-- Header section with logo and application title -->
     <div class="header">
-      <img src="logo.webp" alt="PLD-Progression Grouper Logo" class="app-logo">
-      <h1 class="app-title">PLD-Progression Grouper <span class="app-version">v{{ version }}</span></h1>
+      <img
+        src="logo.webp"
+        alt="PLD-Progression Grouper Logo"
+        class="app-logo"
+      >
+      <h1 class="app-title">
+        PLD-Progression Grouper <span class="app-version">v{{ version }}</span>
+      </h1>
     </div>
 
     <!-- Main content area -->
@@ -46,73 +59,125 @@
         <!-- Individual input groups for different parameters -->
         <div class="input-group">
           <label for="idInput">ID:</label>
-          <input type="text" id="idInput" v-model="patientId" placeholder="Enter ID" />
+          <input
+            id="idInput"
+            v-model="patientId"
+            type="text"
+            placeholder="Enter ID"
+          >
         </div>
         <div class="input-group">
           <label for="ageInput">Age:</label>
-          <input type="number" id="ageInput" v-model="age" placeholder="20-80" />
+          <input
+            id="ageInput"
+            v-model="age"
+            type="number"
+            placeholder="20-80"
+          >
         </div>
         <div class="input-group">
           <label for="liverInput">Total Liver Volume (TLV) [ml] :</label>
-          <input type="number" id="liverInput" v-model="totalLiverVolume" placeholder="0-100" />
+          <input
+            id="liverInput"
+            v-model="totalLiverVolume"
+            type="number"
+            placeholder="0-100"
+          >
         </div>
 
         <!-- Output field for displaying the nTLV and progression group -->
-        <div class="input-group output-group"> <!-- Notice the new class added for specific styling -->
+        <div class="input-group output-group">
+          <!-- Notice the new class added for specific styling -->
           <label for="normalizedTLV">Normalized Total Liver Volume (nTLV):</label>
-          <div class="output-fields"> <!-- New div to wrap output fields -->
-            <output id="normalizedTLV" class="output-field">
+          <div class="output-fields">
+            <!-- New div to wrap output fields -->
+            <output
+              id="normalizedTLV"
+              class="output-field"
+            >
               {{ formattedNormalizedTLV }}
             </output>
-            <output id="progressionGroupOutput" :class="`progression-group-output ${progressionGroup}`">
+            <output
+              id="progressionGroupOutput"
+              :class="`progression-group-output ${progressionGroup}`"
+            >
               {{ progressionGroup }}
             </output>
           </div>
         </div>
 
         <!-- Buttons for user actions -->
-        <button @click="addDataPoint">Plot Point</button>
-        <button @click="printPage">Print Page</button>
-        <button @click="downloadChart">Download Plot</button>
+        <button @click="addDataPoint">
+          Plot Point
+        </button>
+        <button @click="printPage">
+          Print Page
+        </button>
+        <button @click="downloadChart">
+          Download Plot
+        </button>
       </div>
 
       <!-- Container for the chart visualization -->
       <div class="chart-container">
-        <canvas ref="chartCanvas"></canvas>
+        <canvas ref="chartCanvas" />
       </div>
 
       <!-- Progression Group Squares -->
       <div class="progression-groups">
         <div class="progression-group PG3">
-          <strong>PG3</strong><br />&gt;6.6%/y
+          <strong>PG3</strong><br>&gt;6.6%/y
         </div>
         <div class="progression-group PG2">
-          <strong>PG2</strong><br />3.3-6.6%/y
+          <strong>PG2</strong><br>3.3-6.6%/y
         </div>
         <div class="progression-group PG1">
-          <strong>PG1</strong><br />&lt;3.3%/y
+          <strong>PG1</strong><br>&lt;3.3%/y
         </div>
       </div>
   
       <!-- Documentation sentence with link -->
-      <p>For a detailed documentation of this tools and the methodology, please refer to the <a href="https://github.com/halbritter-lab/pld-progression-grouper" target="_blank">GitHub README</a>.</p>
+      <p>
+        For a detailed documentation of this tools and the methodology, please refer to the <a
+          href="https://github.com/halbritter-lab/pld-progression-grouper"
+          target="_blank"
+        >GitHub README</a>.
+      </p>
 
       <!-- Citation policy sentences with links -->
-      <p>Please cite the following publication for this tool: 
-        <a href="https://pubmed.ncbi.nlm.nih.gov/36246085/" target="_blank">
+      <p>
+        Please cite the following publication for this tool: 
+        <a
+          href="https://pubmed.ncbi.nlm.nih.gov/36246085/"
+          target="_blank"
+        >
           Sierks D, et al. Modelling polycystic liver disease progression using age-adjusted liver volumes and targeted mutational analysis. JHEP Rep. 2022.
-        </a> <br />
+        </a> <br>
         A new manuscript reporting the application of this method in autosomal dominant polycystic liver disease is currently under review. A link will be provided here upon publication.
       </p>
     </div>
 
     <!-- Footer section with institution and funder logos -->
     <footer class="footer">
-      <a href="https://nephrologie-intensivmedizin.charite.de/fuer_patienten/cerkid//" target="_blank">
-        <img src="CeRKiD_175x130.jpg" alt="CeRKiD Logo" class="institution-logo">
+      <a
+        href="https://nephrologie-intensivmedizin.charite.de/fuer_patienten/cerkid//"
+        target="_blank"
+      >
+        <img
+          src="CeRKiD_175x130.jpg"
+          alt="CeRKiD Logo"
+          class="institution-logo"
+        >
       </a>
-      <a href="https://www.dfg.de/en/" target="_blank">
-        <img src="dfg_logo_schriftzug_schwarz_foerderung_en.gif" alt="DFG Logo" class="funder-logo">
+      <a
+        href="https://www.dfg.de/en/"
+        target="_blank"
+      >
+        <img
+          src="dfg_logo_schriftzug_schwarz_foerderung_en.gif"
+          alt="DFG Logo"
+          class="funder-logo"
+        >
       </a>
     </footer>
   </div>
