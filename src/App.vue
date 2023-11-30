@@ -109,10 +109,10 @@
     <!-- Footer section with institution and funder logos -->
     <footer class="footer">
       <a href="https://nephrologie-intensivmedizin.charite.de/fuer_patienten/cerkid//" target="_blank">
-        <img src="/CeRKiD_175x130.jpg" alt="CeRKiD Logo" class="institution-logo">
+        <img src="CeRKiD_175x130.jpg" alt="CeRKiD Logo" class="institution-logo">
       </a>
       <a href="https://www.dfg.de/en/" target="_blank">
-        <img src="/dfg_logo_schriftzug_schwarz_foerderung_en.gif" alt="DFG Logo" class="funder-logo">
+        <img src="dfg_logo_schriftzug_schwarz_foerderung_en.gif" alt="DFG Logo" class="funder-logo">
       </a>
     </footer>
   </div>
