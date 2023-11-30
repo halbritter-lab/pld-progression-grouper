@@ -76,6 +76,11 @@
         <button @click="downloadChart">Download Plot</button>
       </div>
 
+      <!-- Container for the chart visualization -->
+      <div class="chart-container">
+        <canvas ref="chartCanvas"></canvas>
+      </div>
+
       <!-- Progression Group Squares -->
       <div class="progression-groups">
         <div class="progression-group PG3">
@@ -87,11 +92,6 @@
         <div class="progression-group PG1">
           <strong>PG1</strong><br />&lt;3.3%/y
         </div>
-      </div>
-
-      <!-- Container for the chart visualization -->
-      <div class="chart-container">
-        <canvas ref="chartCanvas"></canvas>
       </div>
     </div>
   </div>
