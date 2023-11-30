@@ -56,15 +56,37 @@
           <label for="liverInput">Total Liver Volume (TLV) [ml] :</label>
           <input type="number" id="liverInput" v-model="totalLiverVolume" placeholder="0-100" />
         </div>
-        <div class="input-group">
+
+        <!-- Output field for displaying the nTLV and progression group -->
+        <div class="input-group output-group"> <!-- Notice the new class added for specific styling -->
           <label for="normalizedTLV">Normalized Total Liver Volume (nTLV):</label>
-          <output id="normalizedTLV" class="output-field">{{ formattedNormalizedTLV }}</output>
+          <div class="output-fields"> <!-- New div to wrap output fields -->
+            <output id="normalizedTLV" class="output-field">
+              {{ formattedNormalizedTLV }}
+            </output>
+            <output id="progressionGroupOutput" :class="`progression-group-output ${progressionGroup}`">
+              {{ progressionGroup }}
+            </output>
+          </div>
         </div>
 
         <!-- Buttons for user actions -->
         <button @click="addDataPoint">Plot Point</button>
         <button @click="printPage">Print Page</button>
         <button @click="downloadChart">Download Plot</button>
+      </div>
+
+      <!-- Progression Group Squares -->
+      <div class="progression-groups">
+        <div class="progression-group PG3">
+          <strong>PG3</strong><br />&gt;6.6%/y
+        </div>
+        <div class="progression-group PG2">
+          <strong>PG2</strong><br />3.3-6.6%/y
+        </div>
+        <div class="progression-group PG1">
+          <strong>PG1</strong><br />&lt;3.3%/y
+        </div>
       </div>
 
       <!-- Container for the chart visualization -->
@@ -108,6 +130,22 @@ export default {
     // New computed property for formatted normalizedTLV
     const formattedNormalizedTLV = computed(() => {
       return normalizedTLV.value.toFixed(3); // Rounds to 3 decimal places
+    });
+
+    // Computed property for progression group based on age and normalizedTLV
+    const progressionGroup = computed(() => {
+      // Assuming normalizedTLV and age are available here
+      // and are reactive properties
+      const nTLV = normalizedTLV.value;
+      const patientAge = age.value;
+      
+      // Use the given formulas to determine the progression group
+      const pg3Threshold = 0.2671 * Math.exp(0.066 * patientAge);
+      const pg2Threshold = 0.5169 * Math.exp(0.033 * patientAge);
+
+      if (nTLV > pg3Threshold) return 'PG3';
+      if (nTLV > pg2Threshold && nTLV <= pg3Threshold) return 'PG2';
+      return 'PG1';
     });
 
     // Method to add a new data point to the chart
@@ -290,6 +328,7 @@ export default {
       totalLiverVolume,
       normalizedTLV,
       formattedNormalizedTLV,
+      progressionGroup,
       addDataPoint,
       chartCanvas,
       printPage,
@@ -368,12 +407,73 @@ export default {
   margin: auto; /* Centering the container */
 }
 
+/* Style for the progression groups container */
+.progression-groups {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  margin: 20px 0; /* Adjust as needed for spacing */
+}
+
+/* Base style for each progression group box */
+.progression-group {
+  border: 3px solid #FFA3A3; /* Light red border */
+  border-radius: 0px; /* non-rounded corners */
+  padding: 10px;
+  text-align: center;
+  margin-bottom: 5px;
+  min-width: 80px; /* Minimum width set here */
+}
+
+/* Individual background colors for each progression group */
+.PG3 {
+  background-color: #B2241C33;
+  border-color: #B2241C;
+}
+.PG2 {
+  background-color: #F64C4633;
+  border-color: #F64C46;
+}
+.PG1 {
+  background-color: #FDA3A133;
+  border-color: #FDA3A1;
+}
+
 /* Styles for input groups */
 .input-group {
   display: flex;
   flex-direction: column;
   align-items: center; /* Centering items vertically */
   margin: 10px 0; /* Spacing between groups */
+}
+
+/* Styling for input groups with output fields */
+.output-group {
+  display: flex;
+  flex-direction: row;
+  align-items: center; /* Align items vertically */
+  justify-content: space-between; /* Space between label and outputs */
+}
+
+/* Container for output fields */
+.output-fields {
+  display: flex;
+  flex-grow: 1; /* Allow fields to grow equally */
+}
+
+/* Styling for the output fields displaying normalized TLV and progression group */
+.output-field, .progression-group-output {
+  flex-grow: 1; /* Grow equally */
+  border: 1px solid;
+  padding: 5px;
+  border-radius: 0px;
+  text-align: center; /* Center text */
+  margin-left: 5px; /* Space between outputs */
+}
+
+/* Specific styling for progression group output */
+.progression-group-output {
+  /* Add specific styles or overrides for the progression group output here if needed */
 }
 
 /* Label styles within input groups */
@@ -401,12 +501,5 @@ button {
   padding: 10px 15px; /* Padding inside buttons */
   font-size: 16px; /* Font size */
   cursor: pointer; /* Pointer cursor on hover */
-}
-
-/* Styling for the output field displaying normalized TLV */
-.output-field {
-  border: 1px solid #ccc; /* Gray border */
-  padding: 5px; /* Padding inside the field */
-  border-radius: 5px; /* Rounded corners */
 }
 </style>
