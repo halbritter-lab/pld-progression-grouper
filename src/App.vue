@@ -252,23 +252,15 @@
     <!-- Footer section with institution and funder logos -->
     <footer class="footer">
       <a
-        href="https://nephrologie-intensivmedizin.charite.de/fuer_patienten/cerkid//"
+        v-for="link in footerLinks"
+        :key="link.name"
+        :href="link.url"
         target="_blank"
       >
         <img
-          src="CeRKiD_175x130.jpg"
-          alt="CeRKiD Logo"
+          :src="link.img"
+          :alt="link.alt"
           class="institution-logo"
-        >
-      </a>
-      <a
-        href="https://www.dfg.de/en/"
-        target="_blank"
-      >
-        <img
-          src="dfg_logo_schriftzug_schwarz_foerderung_en.gif"
-          alt="DFG Logo"
-          class="funder-logo"
         >
       </a>
     </footer>
@@ -295,11 +287,14 @@ import { CONFIG } from '@/config/config';
 // Import the disclaimer mixin
 import disclaimerMixin from './mixins/disclaimerMixin';
 
+// Import the footer mixin
+import footerMixin from './mixins/footerMixin';
+
 // Register the necessary components for Chart.js
 Chart.register(...registerables);
 
 export default {
-  mixins: [disclaimerMixin],
+  mixins: [disclaimerMixin, footerMixin],
   setup() {
     // Extract the version from the package.json
     const version = packageInfo.version;
