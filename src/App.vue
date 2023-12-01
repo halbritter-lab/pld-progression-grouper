@@ -12,26 +12,13 @@
     >
       <div class="modal-content">
         <h2>Disclaimer for PLD-Progression Grouper</h2>
-        
-        <!-- Sections of the disclaimer with various headings and paragraphs -->
-        <h3>Important Information for All Users:</h3>
-        <p>The "PLD-Progression Grouper" application is intended for informational, educational and research purposes only and should not be used as a substitute for professional medical advice or for direct diagnostic use. The tool is designed to provide insights into Polycystic Liver Disease (PLD) progression but is not meant to replace clinical decision-making or genetic consultation.</p>
-
-        <h3>Usage Guidelines:</h3>
-        <ul>
-          <li>The information provided by this application is not intended for medical diagnosis or treatment decisions without the oversight of qualified healthcare professionals.</li>
-          <li>Users are advised not to base any health-related decisions solely on the results obtained from this application.</li>
-          <li>The data and information presented are provided without any warranty of accuracy, completeness, or usefulness. Users should exercise their own judgment in the interpretation and use of the information.</li>
-        </ul>
-
-        <h3>Liability and Risk:</h3>
-        <p>The application is provided "as is," without any guarantees or obligations for support, updates, or accuracy. Under no circumstances shall the creators or affiliates of the PLD-Progression Grouper be liable for any direct, indirect, incidental, or consequential damages arising from the use of the application.</p>
-
-        <h3>Contact and Queries:</h3>
-        <p>For medical relevance of the application's content, please consult with a healthcare professional. For inquiries or feedback regarding the application, please contact <a href="mailto:info@pld-progression-grouper.org">info@pld-progression-grouper.org</a>.</p>
-
-        <h3>Acknowledgment and Consent:</h3>
-        <p>By using the PLD-Progression Grouper, you acknowledge having read, understood, and agreed to the terms stated in this disclaimer. If you do not agree to these terms, you should not use the application.</p>
+        <section
+          v-for="(section, index) in disclaimerSections"
+          :key="index"
+        >
+          <h3>{{ section.title }}</h3>
+          <p v-html="section.content" />
+        </section>
 
         <!-- Button to close the modal -->
         <button @click="closeModal">
@@ -305,10 +292,14 @@ import packageInfo from '../package.json'; // Adjust the path to your package.js
 // Importing the configuration
 import { CONFIG } from '@/config/config';
 
+// Import the disclaimer mixin
+import disclaimerMixin from './mixins/disclaimerMixin';
+
 // Register the necessary components for Chart.js
 Chart.register(...registerables);
 
 export default {
+  mixins: [disclaimerMixin],
   setup() {
     // Extract the version from the package.json
     const version = packageInfo.version;
