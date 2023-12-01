@@ -302,6 +302,9 @@ import * as XLSX from 'xlsx';
 // Import the package.json file
 import packageInfo from '../package.json'; // Adjust the path to your package.json file
 
+// Importing the configuration
+import { CONFIG } from '@/config/config';
+
 // Register the necessary components for Chart.js
 Chart.register(...registerables);
 
@@ -343,14 +346,14 @@ export default {
 
     // Reactive references for form inputs and chart canvas
     const patientId = ref('');
-    const age = ref(21);
-    const totalLiverVolume = ref(0);
+    const age = ref(CONFIG.AGE_MIN);
+    const totalLiverVolume = ref(CONFIG.TLV_MIN);
     const chartCanvas = ref(null);
     let chart = null;
 
     // Computed property for normalized total liver volume
     const normalizedTLV = computed(() => {
-      return totalLiverVolume.value / 850;
+      return totalLiverVolume.value / CONFIG.NORMALIZATION_FACTOR;
     });
 
     // New computed property for formatted normalizedTLV
@@ -429,13 +432,13 @@ export default {
       tlvValidationMessage.value = '';
 
       // Validate age
-      if (age.value < 21 || age.value > 80) {
-        ageValidationMessage.value = 'Age must be between 21 and 80 years.';
+      if (age.value < CONFIG.AGE_MIN || age.value > CONFIG.AGE_MAX) {
+        ageValidationMessage.value = `Age must be between ${CONFIG.AGE_MIN} and ${CONFIG.AGE_MAX} years.`;
       }
 
       // Validate Total Liver Volume
-      if (totalLiverVolume.value < 0 || totalLiverVolume.value > 20000) {
-        tlvValidationMessage.value = 'Total Liver Volume must be between 0 and 20,000 ml.';
+      if (totalLiverVolume.value < CONFIG.TLV_MIN || totalLiverVolume.value > CONFIG.TLV_MAX) {
+        tlvValidationMessage.value = `Total Liver Volume must be between 0 and ${CONFIG.TLV_MAX} ml.`;
       }
     };
 
@@ -472,7 +475,7 @@ export default {
 
       // Calculate line data points for the first formula
       const lineData1 = Array.from({ length: 61 }, (_, i) => {
-        const age = 20 + i; // Starts from age 20 to 80
+        const age = CONFIG.AGE_INI + i; // Starts from age 20 to 80
         const y = 0.2671 * Math.exp(0.066 * age);
         return { x: age, y };
       });
@@ -537,8 +540,8 @@ export default {
                 text: 'Age (years)'
               },
               type: 'linear',
-              min: 20,
-              max: 80
+              min: CONFIG.CHART_X_AXIS_MIN,
+              max: CONFIG.CHART_X_AXIS_MAX
             },
             y: {
               title: {
@@ -546,7 +549,7 @@ export default {
                 text: 'nTLV'
               },
               beginAtZero: true,
-              max: 25 // Adjusted based on the expected range of nTLV
+              max: CONFIG.CHART_Y_AXIS_MAX
             }
           },
           plugins: {
@@ -648,6 +651,10 @@ export default {
     // Lifecycle hook to set up the chart after the component is mounted
     // Update meta tags and initialize chart on component mount
     onMounted(() => {
+      // Set the CSS variables for the modal
+      document.documentElement.style.setProperty('--modal-max-width', CONFIG.MODAL_MAX_WIDTH);
+      document.documentElement.style.setProperty('--modal-max-height', CONFIG.MODAL_MAX_HEIGHT);
+    
       // Fetch the last commit hash
       fetchLastCommit();
 
@@ -738,7 +745,8 @@ export default {
 /* Responsive design adjustments for the modal on smaller screens */
 @media (max-width: 600px) {
   .modal-content {
-    max-width: 100%; /* Full width for small screens */
+    max-width: var(--modal-max-width);
+    max-height: var(--modal-max-height);
     padding: 10px; /* Reduced padding for small screens */
   }
 }
