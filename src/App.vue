@@ -824,6 +824,16 @@ export default {
   margin: 10px 0; /* Spacing between groups */
 }
 
+/* Styles for input fields */
+.input-group input {
+  padding: 5px; /* Increased padding for better user interaction */
+  border: 2px solid #ddd; /* Subtle border */
+  border-radius: 0px; /* non-rounded corners */
+  font-size: 14px; /* Larger font size for readability */
+  margin-bottom: 10px; /* Spacing below each input field */
+  width: 80%; /* 89% width */
+}
+
 /* Styling for input groups with output fields */
 .output-group {
   display: flex;
@@ -882,8 +892,8 @@ button {
 
 /* Styles for the controls section */
 .controls button {
-  background-color: #4CAF50;
-  color: white;
+  background-color: #00bf7d;
+  color: black;
   border: none;
   border-radius: 5px;
   cursor: pointer;
@@ -898,7 +908,7 @@ button {
 
 /* Specific styles for the Plot Point button */
 .controls button.plot-point {
-  background-color: #007BFF; /* Active color */
+  background-color: #89ce00; /* Active color */
   border: 2px solid #0056b3; /* Border color */
 }
 
