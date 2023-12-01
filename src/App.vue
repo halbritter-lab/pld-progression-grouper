@@ -584,7 +584,7 @@ export default {
       const dataStr = JSON.stringify(dataPoints.value);
       const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
 
-      const exportFileDefaultName = 'data.json';
+      const exportFileDefaultName = `data_${new Date().toISOString()}.json`;
       const linkElement = document.createElement('a');
       linkElement.setAttribute('href', dataUri);
       linkElement.setAttribute('download', exportFileDefaultName);
@@ -639,10 +639,10 @@ export default {
     const downloadDataAsExcel = () => {
       const wb = XLSX.utils.book_new(); // create a new workbook
       const ws = XLSX.utils.json_to_sheet(dataPoints.value); // convert data to worksheet
-
       XLSX.utils.book_append_sheet(wb, ws, "Data"); // append worksheet to workbook
 
-      XLSX.writeFile(wb, "Data.xlsx"); // write workbook and download
+      const fileName = `Data_${new Date().toISOString()}.xlsx`;
+      XLSX.writeFile(wb, fileName); // write workbook and download
     };
 
     // Lifecycle hook to set up the chart after the component is mounted
