@@ -243,6 +243,10 @@
           href="https://github.com/halbritter-lab/pld-progression-grouper"
           target="_blank"
         >GitHub README</a>.
+        Let us know if you like this tool and how we can improve it using our <a
+          href="https://docs.google.com/forms/d/1MM4g1Ukjiy73ThWUMHARDcyQg-PwOWuI46kQV5HwXmY"
+          target="_blank"
+        >Feedback Form</a>.
       </p>
 
       <!-- Citation policy sentences with links -->
