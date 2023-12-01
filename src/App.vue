@@ -74,6 +74,8 @@
             placeholder="Enter ID"
           >
         </div>
+
+        <!-- Age input group -->
         <div class="input-group">
           <label for="ageInput">Age [y]:</label>
           <input
@@ -83,14 +85,30 @@
             placeholder="20-80"
           >
         </div>
+        <!-- Display age validation message -->
+        <div
+          v-if="ageValidationMessage"
+          class="validation-message"
+        >
+          {{ ageValidationMessage }}
+        </div>
+
+        <!-- Total Liver Volume input group -->
         <div class="input-group">
           <label for="liverInput">Total Liver Volume (TLV) [ml] :</label>
           <input
             id="liverInput"
             v-model="totalLiverVolume"
             type="number"
-            placeholder="0-100"
+            placeholder="0-20000"
           >
+        </div>
+        <!-- Display TLV validation message -->
+        <div
+          v-if="tlvValidationMessage"
+          class="validation-message"
+        >
+          {{ tlvValidationMessage }}
         </div>
 
         <!-- Output field for displaying the nTLV and progression group -->
@@ -122,13 +140,20 @@
 
         <!-- Buttons for user actions -->
         <!-- Button for plotting the data point -->
-        <button @click="addDataPoint">
-          Plot Point
+        <button
+          class="plot-point"
+          :class="{ 'button-disabled': isInvalidInput }"
+          :disabled="isInvalidInput"
+          @click="addDataPoint"
+        >
+          Plot Data
         </button>
+
         <!-- Button for printing the page -->
         <button @click="printPage">
           Print Page
         </button>
+
         <!-- Button for downloading the chart as an image -->
         <button @click="downloadChart">
           Download Plot
@@ -136,7 +161,7 @@
 
         <!-- Buttons for saving and loading -->
         <button @click="saveDataAsJson">
-          Save (JSON)
+          Save
         </button>
         <!-- invisible file input element -->
         <input
@@ -145,9 +170,10 @@
           style="display: none;"
           @change="loadDataFromJson"
         >
+
         <!-- Button for triggering the file input -->
         <button @click="triggerFileInput">
-          Load (JSON)
+          Load
         </button>
         <!-- Button for downloading data as Excel -->
         <button @click="downloadDataAsExcel">
@@ -261,7 +287,7 @@
 
 <script>
 // import the necessary components from Vue.js
-import { ref, onMounted, onUnmounted, computed } from 'vue';
+import { ref, onMounted, onUnmounted, computed, watch } from 'vue';
 
 // import the necessary components from Chart.js
 import { Chart, registerables } from 'chart.js';
@@ -299,6 +325,10 @@ export default {
     // Warning message for missing ID
     const idWarningMessage = ref('');
 
+    // Refs for validation messages
+    const ageValidationMessage = ref('');
+    const tlvValidationMessage = ref('');
+
     // Modal visibility state
     const showModal = ref(true);
 
@@ -309,7 +339,7 @@ export default {
 
     // Reactive references for form inputs and chart canvas
     const patientId = ref('');
-    const age = ref(20);
+    const age = ref(21);
     const totalLiverVolume = ref(0);
     const chartCanvas = ref(null);
     let chart = null;
@@ -354,6 +384,14 @@ export default {
 
     // addDataPoint method to add a new data point to the chart
     const addDataPoint = () => {
+      // Validate the input
+      if (isInvalidInput.value) {
+        // Handle the error, perhaps by setting idWarningMessage
+        idWarningMessage.value = 'Please correct the errors before plotting.';
+        return;
+      }
+
+      // Check if the ID is empty
       if (!patientId.value.trim()) {
         idWarningMessage.value = "Please enter an ID before plotting a point.";
         return;
@@ -380,6 +418,31 @@ export default {
       // Reset the warning message if the data point is successfully added
       idWarningMessage.value = '';
     };
+
+    // Validation method
+    const validateInput = () => {
+      ageValidationMessage.value = '';
+      tlvValidationMessage.value = '';
+
+      // Validate age
+      if (age.value < 21 || age.value > 80) {
+        ageValidationMessage.value = 'Age must be between 21 and 80 years.';
+      }
+
+      // Validate Total Liver Volume
+      if (totalLiverVolume.value < 0 || totalLiverVolume.value > 20000) {
+        tlvValidationMessage.value = 'Total Liver Volume must be between 0 and 20,000 ml.';
+      }
+    };
+
+    // Computed property to determine if input is invalid
+    const isInvalidInput = computed(() => {
+      return ageValidationMessage.value !== '' || tlvValidationMessage.value !== '';
+    });
+
+    // Setup watchers
+    watch(age, validateInput);
+    watch(totalLiverVolume, validateInput);
 
     const removeDataPoint = (index) => {
       // Remove from dataPoints array
@@ -612,6 +675,9 @@ export default {
       version,
       lastCommitHash,
       idWarningMessage,
+      ageValidationMessage,
+      tlvValidationMessage,
+      isInvalidInput,
       showModal,
       closeModal,
       dataPoints,
@@ -810,6 +876,47 @@ button {
   cursor: pointer; /* Pointer cursor on hover */
 }
 
+/* Styles for the controls section */
+.controls button {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  padding: 10px 15px;
+  margin: 5px;
+}
+
+/* Hover styles for the buttons */
+.controls button:hover {
+  background-color: #45a049;
+}
+
+/* Specific styles for the Plot Point button */
+.controls button.plot-point {
+  background-color: #007BFF; /* Active color */
+  border: 2px solid #0056b3; /* Border color */
+}
+
+/* Styles for the Plot Point button when disabled */
+.controls button.plot-point.button-disabled {
+  background-color: #ccc; /* Disabled background color */
+  color: #666; /* Disabled text color */
+  cursor: not-allowed;
+}
+
+/* Styles for the Plot Point button in active state */
+.controls button.plot-point:active {
+  background-color: #0056b3; /* Active state background color */
+  border-color: #004085; /* Active state border color */
+}
+
+/* Hover styles for the Plot Point button */
+.controls button.plot-point:hover {
+  background-color: #0062cc; /* Hover background color */
+  border-color: #0056b3; /* Hover border color */
+}
+
 /* Styles for the footer */
 .footer {
   padding: 10px 0;
@@ -866,27 +973,28 @@ button {
   background-color: #ff3333; /* Darker red on hover */
 }
 
-/* Styles for the controls section */
-.controls button {
-  /* Styling for the buttons */
-  background-color: #4CAF50;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  padding: 10px 15px;
-  margin: 5px;
-}
-
-/* Hover styles for the buttons */
-.controls button:hover {
-  background-color: #45a049;
-}
-
 /* Styles for the warning message */
 .id-warning-message {
   color: red; /* Choose a color that stands out */
   margin: 10px 0;
   font-weight: bold;
+}
+
+/* Styles for validation message */
+.validation-message {
+  color: #a94442; /* Red color for error messages */
+  background-color: #f2dede; /* Light red background */
+  border-color: #ebccd1; /* Red border */
+  padding: .75rem 1.25rem;
+  margin-bottom: 1rem;
+  border: 1px solid transparent;
+  border-radius: .25rem;
+}
+
+/* Styles for disabled buttons */
+.button-disabled {
+  background-color: #ccc; /* Example: gray background */
+  color: #666; /* Example: darker text color */
+  cursor: not-allowed; /* Show a disabled cursor */
 }
 </style>
