@@ -1,3 +1,2 @@
-Sitemap: https://halbritter-lab.github.io/pld-progression-grouper/sitemap.xml
 User-agent: *
 Disallow:
