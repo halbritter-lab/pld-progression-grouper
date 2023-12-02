@@ -30,7 +30,7 @@ The principle of the "PLD-Progression Grouper" tool has been first published in 
 
 The application is built using Vue.js and Chart.js, ensuring a responsive and interactive user experience. The layout is designed with controls and input fields on the left and the chart on the right, facilitating ease of use and clear data presentation.
 
-## Usage and application components
+## Webapp usage and application components
 
 <p align="left">
     <img src="public/pld-app_application-components.png" alt="PLD-Progression Grouper application components description" width="600">
@@ -80,6 +80,30 @@ The application is built using Vue.js and Chart.js, ensuring a responsive and in
    - If present, this would display a table of all data points entered, including ID, age, TLV, nTLV, progression group, and an option to remove data points.
 
 Each numbered item refers to a different component or section of the app. Users interact with these components to input data, receive computed outputs, manage the data points, and utilize the results for further analysis or documentation.
+
+
+## URL API Documentation
+
+### Overview
+The PLD-Progression Grouper tool supports URL query parameters, allowing users to preset input fields directly through the URL. This feature enables easy sharing of specific configurations and faster access to the tool with predefined settings.
+
+### Query Parameters
+The tool accepts the following query parameters:
+
+1. `patientId`: Sets the patient's ID.
+2. `age`: Sets the patient's age.
+3. `tlv`: Sets the Total Liver Volume (TLV) in milliliters.
+3. `acknowledgeBanner`: Sets the banner acknowledgement state. Accepts `true` or `false`.
+
+### Usage Examples
+- **Setting Patient ID and Age**: 
+This URL sets the patient's ID to "12345" and age to "50".
+https://halbritter-lab.github.io/pld-progression-grouper/?patientId=12345&age=50
+
+- **Setting All Parameters**:
+This URL sets the patient's ID to "12345", age to "50", and Total Liver Volume to "15000 ml" and acknowledges the banner.
+https://halbritter-lab.github.io/pld-progression-grouper/?patientId=12345&age=50&tlv=15000&acknowledgeBanner=true
+
 
 
 ## Limitations and Relevance
