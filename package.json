@@ -1,6 +1,6 @@
 {
   "name": "pld-progression-grouper-app",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
@@ -11,6 +11,7 @@
     "chart.js": "^4.4.0",
     "core-js": "^3.8.3",
     "vue": "^3.2.13",
+    "vue-router": "^4.2.5",
     "xlsx": "^0.18.5"
   },
   "devDependencies": {

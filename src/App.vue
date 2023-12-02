@@ -272,6 +272,9 @@
 // import the necessary components from Vue.js
 import { ref, onMounted, onUnmounted, computed, watch } from 'vue';
 
+// Import the router
+import { useRouter, useRoute } from 'vue-router';
+
 // import the necessary components from Chart.js
 import { Chart, registerables } from 'chart.js';
 
@@ -296,11 +299,45 @@ Chart.register(...registerables);
 export default {
   mixins: [disclaimerMixin, footerMixin],
   setup() {
+    // Router and route references
+    const router = useRouter();
+    const route = useRoute();
+
     // Extract the version from the package.json
     const version = packageInfo.version;
 
     // Reference for the last commit hash
     const lastCommitHash = ref('');
+
+    const getUrlQueryParams = async () => {
+      //router is async so we wait for it to be ready
+      await router.isReady();
+
+      // Parse URL parameters and set initial data
+      if (route.query.acknowledgeBanner === "true") {
+        showModal.value = false;
+      }
+
+      // Set the data points from the URL query parameters
+      if (route.query.patientId) {
+        patientId.value = route.query.patientId;
+      }
+
+      // Set the data points from the URL query parameters
+      if (route.query.age) {
+        age.value = route.query.age;
+      }
+
+      // Set the data points from the URL query parameters
+      if (route.query.tlv) {
+        totalLiverVolume.value = route.query.tlv;
+      }
+
+      // Add the data point if all the parameters are available
+      if (route.query.patientId && route.query.age && route.query.tlv) {
+        addDataPoint();
+      }
+    };
 
     // Fetch the last commit hash
     const fetchLastCommit = async () => {
@@ -637,6 +674,9 @@ export default {
     // Lifecycle hook to set up the chart after the component is mounted
     // Update meta tags and initialize chart on component mount
     onMounted(() => {
+      // Get the URL query parameters
+      getUrlQueryParams();
+
       // Set the CSS variables for the modal
       document.documentElement.style.setProperty('--modal-max-width', CONFIG.MODAL_MAX_WIDTH);
       document.documentElement.style.setProperty('--modal-max-height', CONFIG.MODAL_MAX_HEIGHT);
@@ -656,10 +696,13 @@ export default {
       // Add author meta tags
       updateMetaTag('author', 'Bernt Popp, Ria Schönauer, Dana Sierks, Jan Halbritter');
       updateMetaTag('creator', 'Bernt Popp, Ria Schönauer, Dana Sierks, Jan Halbritter');
-
-      // Initialize the chart
+      
+      // Set up the chart
       setupChart();
+
+      // Add event listener for window resize
       window.addEventListener('resize', handleResize);
+
     });
 
     // Lifecycle hook to remove event listeners when the component is unmounted
