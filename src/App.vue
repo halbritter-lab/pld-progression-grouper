@@ -35,7 +35,15 @@
         class="app-logo"
       >
       <h1 class="app-title">
-        PLD-Progression Grouper <span class="app-version">v{{ version }}-{{ lastCommitHash }}</span>
+        PLD-Progression Grouper <span class="app-version">v{{ version }}-</span>
+        <span
+          v-if="!fetchError"
+          class="app-commit"
+        >{{ lastCommitHash }}</span>
+        <span
+          v-else
+          class="offline-indicator"
+        >offline</span>
       </h1>
     </div>
 
@@ -339,16 +347,22 @@ export default {
       }
     };
 
+    // Reference for the last commit hash
+    const fetchError = ref(false);
+
     // Fetch the last commit hash
     const fetchLastCommit = async () => {
       try {
         const response = await fetch('https://api.github.com/repos/halbritter-lab/pld-progression-grouper/commits?per_page=1');
+        if (!response.ok) throw new Error('Network response was not ok.');
+
         const commits = await response.json();
         if (commits.length) {
-          lastCommitHash.value = commits[0].sha.substring(0, 7); // Gets first 7 characters of the commit hash
+          lastCommitHash.value = commits[0].sha.substring(0, 7);
         }
       } catch (error) {
         console.error('Error fetching last commit:', error);
+        fetchError.value = true;
       }
     };
 
@@ -707,6 +721,7 @@ export default {
 
     // Lifecycle hook to remove event listeners when the component is unmounted
     onUnmounted(() => {
+      // Remove event listeners for online/offline status
       window.removeEventListener('resize', handleResize);
     });
 
@@ -738,6 +753,7 @@ export default {
       saveDataAsJson,
       loadDataFromJson,
       downloadDataAsExcel,
+      fetchError,
     };
   }
 };
@@ -756,6 +772,14 @@ export default {
   color: #666; /* Lighter text color */
   font-weight: normal; /* Less emphasis compared to the title */
   padding-left: 10px; /* Space between title and version number */
+}
+
+/* Styles for the version number */
+.app-commit {
+  font-size: 0.8em; /* Smaller font size */
+  color: #666; /* Lighter text color */
+  font-weight: normal; /* Less emphasis compared to the title */
+  padding-left: 0px; /* Space between title and version number */
 }
 
 /* Styles for the modal background, making it fixed and covering the entire screen */
@@ -1047,5 +1071,16 @@ button {
   background-color: #ccc; /* Example: gray background */
   color: #666; /* Example: darker text color */
   cursor: not-allowed; /* Show a disabled cursor */
+}
+
+/* Styles for the offline indicator */
+.offline-indicator {
+  color: red;
+  background-color: lightgray;
+  border: 3px;
+  padding-left: 0px;
+  text-align: center;
+  border-radius: 3px; /* non-rounded corners */
+  font-size: 16px; /* Larger font size for readability */
 }
 </style>
