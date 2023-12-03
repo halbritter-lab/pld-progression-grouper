@@ -4,6 +4,15 @@
     id="app"
     class="container"
   >
+    <div
+      v-if="disclaimerAcknowledged && !showModal"
+      class="acknowledgment-message"
+    >
+      <button @click="reopenModal">
+        Disclaimer
+      </button> acknowledged on this device at: {{ acknowledgmentTime }}.
+    </div>
+
     <!-- Modal for displaying the disclaimer -->
     <!-- It appears conditionally based on the showModal reactive property -->
     <div
@@ -374,11 +383,23 @@ export default {
     const tlvValidationMessage = ref('');
 
     // Modal visibility state
-    const showModal = ref(true);
+    const disclaimerAcknowledged = ref(localStorage.getItem('disclaimerAcknowledged') === 'true');
+    const acknowledgmentTime = ref(localStorage.getItem('acknowledgmentTime'));
+    const showModal = ref(!disclaimerAcknowledged.value);
 
     // Close the modal
     const closeModal = () => {
+      const currentTime = new Date().toLocaleString();
       showModal.value = false;
+      disclaimerAcknowledged.value = true;
+      acknowledgmentTime.value = currentTime;
+      localStorage.setItem('disclaimerAcknowledged', 'true');
+      localStorage.setItem('acknowledgmentTime', currentTime);
+    };
+
+    // Reopen the modal
+    const reopenModal = () => {
+      showModal.value = true;
     };
 
     // Reactive references for form inputs and chart canvas
@@ -735,6 +756,9 @@ export default {
       isInvalidInput,
       showModal,
       closeModal,
+      acknowledgmentTime,
+      disclaimerAcknowledged,
+      reopenModal,
       dataPoints,
       patientId,
       age,
@@ -764,6 +788,12 @@ export default {
 /* Global font style for the entire application */
 * {
   font-family: Arial, sans-serif;
+}
+
+/* Styles for the main application container */
+body {
+  margin: 0;
+  padding: 0;
 }
 
 /* Styles for the version number */
@@ -1082,5 +1112,30 @@ button {
   text-align: center;
   border-radius: 3px; /* non-rounded corners */
   font-size: 16px; /* Larger font size for readability */
+}
+
+/* Styles for the acknowledgment message */
+.acknowledgment-message {
+  font-size: 12px; /* Larger font size for readability */
+  background-color: orange;
+  color: black;
+  text-align: center;
+  padding: 0px;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  margin-top: 0; /* Ensure there is no margin on the top */
+}
+
+/* Styles for the acknowledgment message content */
+.acknowledgment-message button {
+  background-color: white;
+  color: black;
+  border: 1px solid black;
+  padding: 1px 6px;
+  font-size: 12px;
+  cursor: pointer;
+  margin-left: 0px;
+  border-radius: 5px;
 }
 </style>
