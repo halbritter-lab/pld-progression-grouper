@@ -67,7 +67,10 @@
       </div>
 
       <!-- Control section for user inputs -->
-      <div class="controls">
+      <div
+        v-if="showControls"
+        class="controls"
+      >
         <!-- Individual input groups for different parameters -->
         <div class="input-group">
           <label for="idInput">ID:</label>
@@ -253,32 +256,39 @@
       </div>
 
       <!-- Documentation sentence with link -->
-      <p>
-        For a detailed documentation of this tool and the methodology, please refer to the <a
-          href="https://github.com/halbritter-lab/pld-progression-grouper"
-          target="_blank"
-        >GitHub README</a>.
-        Let us know if you like this tool and how we can improve it using our <a
-          href="https://docs.google.com/forms/d/1MM4g1Ukjiy73ThWUMHARDcyQg-PwOWuI46kQV5HwXmY"
-          target="_blank"
-        >Feedback Form</a>.
-      </p>
+      <div v-if="showDocumentation">
+        <p>
+          For a detailed documentation of this tool and the methodology, please refer to the <a
+            href="https://github.com/halbritter-lab/pld-progression-grouper"
+            target="_blank"
+          >GitHub README</a>.
+          Let us know if you like this tool and how we can improve it using our <a
+            href="https://docs.google.com/forms/d/1MM4g1Ukjiy73ThWUMHARDcyQg-PwOWuI46kQV5HwXmY"
+            target="_blank"
+          >Feedback Form</a>.
+        </p>
+      </div>
 
       <!-- Citation policy sentences with links -->
-      <p>
-        Please cite the following publication for this tool: 
-        <a
-          href="https://pubmed.ncbi.nlm.nih.gov/36246085/"
-          target="_blank"
-        >
-          Sierks D, et al. Modelling polycystic liver disease progression using age-adjusted liver volumes and targeted mutational analysis. JHEP Rep. 2022.
-        </a> <br>
-        A new manuscript reporting the application of this method in autosomal dominant polycystic liver disease is currently under review. A link will be provided here upon publication.
-      </p>
+      <div v-if="showCitation">
+        <p>
+          Please cite the following publication for this tool: 
+          <a
+            href="https://pubmed.ncbi.nlm.nih.gov/36246085/"
+            target="_blank"
+          >
+            Sierks D, et al. Modelling polycystic liver disease progression using age-adjusted liver volumes and targeted mutational analysis. JHEP Rep. 2022.
+          </a> <br>
+          A new manuscript reporting the application of this method in autosomal dominant polycystic liver disease is currently under review. A link will be provided here upon publication.
+        </p>
+      </div>
     </div>
 
     <!-- Footer section with institution and funder logos -->
-    <footer class="footer">
+    <footer
+      v-if="showFooter"
+      class="footer"
+    >
       <a
         v-for="link in footerLinks"
         :key="link.name"
@@ -340,6 +350,15 @@ export default {
     // Reference for the last commit hash
     const lastCommitHash = ref('');
 
+    // Reference for the last commit hash
+    const fetchError = ref(false);
+
+    // Define visibility flags
+    const showFooter = ref(true);
+    const showCitation = ref(true);
+    const showDocumentation = ref(true);
+    const showControls = ref(true);
+
     const getUrlQueryParams = async () => {
       //router is async so we wait for it to be ready
       await router.isReady();
@@ -368,10 +387,13 @@ export default {
       if (route.query.patientId && route.query.age && route.query.tlv) {
         addDataPoint();
       }
-    };
 
-    // Reference for the last commit hash
-    const fetchError = ref(false);
+      // Set visibility from URL query parameters
+      showFooter.value = route.query.showFooter !== 'false';
+      showCitation.value = route.query.showCitation !== 'false';
+      showDocumentation.value = route.query.showDocumentation !== 'false';
+      showControls.value = route.query.showControls !== 'false';
+    };
 
     // Fetch the last commit hash
     const fetchLastCommit = async () => {
@@ -812,6 +834,10 @@ export default {
       loadDataFromJson,
       downloadDataAsExcel,
       fetchError,
+      showFooter,
+      showCitation,
+      showDocumentation,
+      showControls,
     };
   }
 };
