@@ -159,14 +159,21 @@
         </button>
 
         <!-- Button for downloading the chart as an image -->
-        <button @click="downloadChart">
+        <button
+          :disabled="dataPoints.length === 0"
+          @click="downloadChart"
+        >
           Download Plot
         </button>
 
         <!-- Buttons for saving and loading -->
-        <button @click="saveDataAsJson">
+        <button
+          :disabled="dataPoints.length === 0"
+          @click="saveDataAsJson"
+        >
           Save
         </button>
+
         <!-- invisible file input element -->
         <input
           ref="fileInput"
@@ -179,8 +186,12 @@
         <button @click="triggerFileInput">
           Load
         </button>
+
         <!-- Button for downloading data as Excel -->
-        <button @click="downloadDataAsExcel">
+        <button
+          :disabled="dataPoints.length === 0"
+          @click="downloadDataAsExcel"
+        >
           Download (Excel)
         </button>
       </div>
@@ -417,13 +428,24 @@ export default {
       return totalLiverVolume.value / CONFIG.NORMALIZATION_FACTOR;
     });
 
-    // New computed property for formatted normalizedTLV
+    // Computed property for formatted normalizedTLV
+    // This is used to display the nTLV with 3 decimal places
+    // and null if the input is invalid or out-of-range
     const formattedNormalizedTLV = computed(() => {
-      return normalizedTLV.value.toFixed(3); // Rounds to 3 decimal places
+      if (age.value < CONFIG.AGE_MIN || age.value > CONFIG.AGE_MAX ||
+          totalLiverVolume.value < CONFIG.TLV_MIN || totalLiverVolume.value > CONFIG.TLV_MAX) {
+        return null; // Or any appropriate message indicating out-of-range
+      }
+      return (totalLiverVolume.value / CONFIG.NORMALIZATION_FACTOR).toFixed(3);
     });
 
-    // Computed property for progression group based on age and normalizedTLV
     const progressionGroup = computed(() => {
+      // return null if the input is invalid or out-of-range
+      if (age.value < CONFIG.AGE_MIN || age.value > CONFIG.AGE_MAX ||
+          totalLiverVolume.value < CONFIG.TLV_MIN || totalLiverVolume.value > CONFIG.TLV_MAX) {
+        return null; // Or any appropriate message indicating out-of-range
+      }
+
       // Assuming normalizedTLV and age are available here
       // and are reactive properties
       const nTLV = normalizedTLV.value;
@@ -437,13 +459,16 @@ export default {
       return 'PG1';
     });
 
-    // Computed property for liver growth rate (LGR)
     const liverGrowthRate = computed(() => {
-      // Check if age and normalizedTLV are defined and valid
-      if (age.value && normalizedTLV.value && age.value > 20) {
-        return 100 * Math.log(normalizedTLV.value) / (age.value - 20);
+      // return null if the input is invalid or out-of-range
+      if (age.value < CONFIG.AGE_MIN || age.value > CONFIG.AGE_MAX ||
+          totalLiverVolume.value < CONFIG.TLV_MIN || totalLiverVolume.value > CONFIG.TLV_MAX) {
+        return null; // Or any appropriate message indicating out-of-range
       }
-      return null; // Return null if the calculation can't be performed
+
+      // Check if age and normalizedTLV are defined and valid
+      // use the given formula to calculate the liver growth rate
+      return formulas.calculateLiverGrowthRate(age.value, normalizedTLV.value);
     });
 
     // Reactive reference for the data points array

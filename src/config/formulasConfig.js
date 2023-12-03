@@ -10,5 +10,11 @@ export const formulas = {
     const age = startAge + i;
     return { x: age, y: formulas.calculatePG2Threshold(age) };
   }),
+  calculateLiverGrowthRate: (age, nTLV) => {
+    if (age > 20) {
+      return 100 * Math.log(nTLV) / (age - 20);
+    }
+    return null;
+  }
   // Add more formulas as needed
 };
