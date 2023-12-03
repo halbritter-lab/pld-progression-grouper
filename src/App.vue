@@ -476,6 +476,7 @@ export default {
       chart.data.datasets[0].data.push({
         x: newData.age,
         y: normalizedTLV.value,
+        id: newData.id  // Include the ID
       });
 
       chart.update();
@@ -616,9 +617,23 @@ export default {
             },
             tooltip: {
               callbacks: {
-                beforeBody: (context) => {
-                  const id = context[0].raw.id;
-                  return id ? `ID: ${id}` : '';
+                label: function(context) {
+                  let label = context.dataset.label || '';
+                  if (label) {
+                      label += ': ';
+                  }
+                  if (context.parsed.x !== null) {
+                      label +=context.parsed.x;
+                  }
+                  if (context.parsed.y !== null) {
+                      label += ', ' + context.parsed.y.toFixed(2);
+                  }
+                  // Append the ID to the tooltip
+                  const dataPoint = context.raw;
+                  if (dataPoint && dataPoint.id) {
+                      label += `; ID: ${dataPoint.id}`;
+                  }
+                  return label;
                 }
               }
             }
