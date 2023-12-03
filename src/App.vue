@@ -310,6 +310,9 @@ import disclaimerMixin from './mixins/disclaimerMixin';
 // Import the footer mixin
 import footerMixin from './mixins/footerMixin';
 
+// Import the formulas
+import { formulas } from '@/config/formulasConfig';
+
 // Register the necessary components for Chart.js
 Chart.register(...registerables);
 
@@ -425,13 +428,12 @@ export default {
       // and are reactive properties
       const nTLV = normalizedTLV.value;
       const patientAge = age.value;
-      
-      // Use the given formulas to determine the progression group
-      const pg3Threshold = 0.2671 * Math.exp(0.066 * patientAge);
-      const pg2Threshold = 0.5169 * Math.exp(0.033 * patientAge);
 
-      if (nTLV > pg3Threshold) return 'PG3';
-      if (nTLV > pg2Threshold && nTLV <= pg3Threshold) return 'PG2';
+      // Use the given formulas to determine the progression group
+      if (nTLV > formulas.calculatePG3Threshold(patientAge)) return 'PG3';
+      if (nTLV > formulas.calculatePG2Threshold(patientAge) && nTLV <= formulas.calculatePG3Threshold(patientAge)) return 'PG2';
+
+      // If the nTLV is less than or equal to the PG2 threshold, return PG1
       return 'PG1';
     });
 
@@ -530,22 +532,14 @@ export default {
 
     // Method to set up the chart
     const setupChart = () => {
+      // Get the canvas element
       const ctx = chartCanvas.value.getContext('2d');
 
-      // Calculate line data points for the first formula
-      const lineData1 = Array.from({ length: 61 }, (_, i) => {
-        const age = CONFIG.AGE_INI + i; // Starts from age 20 to 80
-        const y = 0.2671 * Math.exp(0.066 * age);
-        return { x: age, y };
-      });
+      // Using the external formulas for line data
+      const lineData1 = formulas.generateLineData1(61, 20); // Assuming 61 data points starting from age 20
+      const lineData2 = formulas.generateLineData2(61, 20); // Similarly for lineData2
 
-      // Calculate line data points for the second formula
-      const lineData2 = Array.from({ length: 61 }, (_, i) => {
-        const age = 20 + i; // Starts from age 20 to 80
-        const y = 0.5169 * Math.exp(0.033 * age);
-        return { x: age, y };
-      });
-
+      // Create the chart
       chart = new Chart(ctx, {
         type: 'scatter',
         data: {
