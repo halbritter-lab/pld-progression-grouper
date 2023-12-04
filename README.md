@@ -113,6 +113,22 @@ This URL will hide the footer and controls but display the citation information 
 https://halbritter-lab.github.io/pld-progression-grouper/?showFooter=false&showCitation=true&showDocumentation=true&showControls=false
 
 
+## Data Privacy and Storage
+
+### Local Data Storage
+The PLD-Progression Grouper is designed to prioritize user privacy and data security:
+- **Client-Side Data Storage**: All data input into the application is stored locally on the user's device. No personal or sensitive data is sent to or stored on a server.
+- **Data Security**: By keeping data client-side, the risk of data breaches is minimized, ensuring user data remains private and secure.
+
+## Output Formats
+
+### Export Options
+Users can export their data in various formats for ease of use and flexibility:
+- **Excel (XLSX)**: For users who prefer spreadsheet analysis, data can be exported in Excel format.
+- **JSON**: Offering a more technical format, data can be saved as JSON files, which are ideal for further processing or integration with other applications.
+- **PNG**: The application allows users to download charts as PNG images, perfect for presentations or reports.
+
+
 ## Progressive Web App (PWA) support
 
 The PLD-Progression Grouper is also available as a Progressive Web App (PWA), providing a more integrated and efficient user experience.
