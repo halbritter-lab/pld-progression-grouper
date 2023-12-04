@@ -916,10 +916,25 @@ body {
   width: 100%; /* Full width */
 }
 
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
 /* Styles for the application logo */
 .app-logo {
   max-width: 92px; /* Fixed maximum width */
   margin-right: 20px; /* Spacing between logo and title */
+  animation: fadeIn 2s ease-out forwards;
+}
+
+.app-logo:hover {
+  animation: pulse 2s infinite;
 }
 
 /* Styling for the application title */
