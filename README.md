@@ -87,23 +87,49 @@ Each numbered item refers to a different component or section of the app. Users 
 ### Overview
 The PLD-Progression Grouper tool supports URL query parameters, allowing users to preset input fields directly through the URL. This feature enables easy sharing of specific configurations and faster access to the tool with predefined settings.
 
-### Query Parameters
+### Query flags
 The tool accepts the following query parameters:
 
 1. `patientId`: Sets the patient's ID.
 2. `age`: Sets the patient's age.
 3. `tlv`: Sets the Total Liver Volume (TLV) in milliliters.
-3. `acknowledgeBanner`: Sets the banner acknowledgement state. Accepts `true` or `false`.
+4. `acknowledgeBanner`: Sets the banner acknowledgement state. Accepts `true` or `false`.
+5. `showFooter`: Controls the visibility of the footer. Accepts `true` or `false`.
+6. `showCitation`: Toggles the display of citation information. Accepts `true` or `false`.
+7. `showDocumentation`: Determines if the documentation link is shown. Accepts `true` or `false`.
+8. `showControls`: Enables or disables the display of the user input controls. Accepts `true` or `false`.
 
-### Usage Examples
-- **Setting Patient ID and Age**: 
+### Usage examples
+- **Setting ID and age**: 
 This URL sets the patient's ID to "12345" and age to "50".
 https://halbritter-lab.github.io/pld-progression-grouper/?patientId=12345&age=50
 
-- **Setting All Parameters**:
+- **Setting all parameters**:
 This URL sets the patient's ID to "12345", age to "50", and Total Liver Volume to "15000 ml" and acknowledges the banner.
 https://halbritter-lab.github.io/pld-progression-grouper/?patientId=12345&age=50&tlv=15000&acknowledgeBanner=true
 
+- **Setting view controls**:
+This URL will hide the footer and controls but display the citation information and documentation link.
+https://halbritter-lab.github.io/pld-progression-grouper/?showFooter=false&showCitation=true&showDocumentation=true&showControls=false
+
+
+## Progressive Web App (PWA) support
+
+The PLD-Progression Grouper is also available as a Progressive Web App (PWA), providing a more integrated and efficient user experience.
+The PWA is compatible with most modern browsers on both desktop and mobile devices. For the best experience, ensure your browser is up to date.
+
+### Installing the PWA
+
+1. **Access the Tool**: Open the PLD-Progression Grouper in your web browser.
+2. **Install Prompt**: A prompt to "Add to Home Screen" will appear if you are using a compatible browser.
+3. **Confirm Installation**: Click the prompt to install the application on your device.
+4. **Access from Home Screen**: Once installed, the app can be accessed directly from your home screen, just like any other installed application.
+
+### Usage
+
+- **Offline access**: The PWA can be used offline, making it convenient for users without constant internet access.
+- **Faster load times**: As a PWA, the application loads faster, providing a smoother user experience.
+- **Regular updates**: The app will update automatically with the latest features and improvements when online.
 
 
 ## Limitations and Relevance
