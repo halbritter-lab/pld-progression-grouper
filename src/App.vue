@@ -348,7 +348,7 @@ export default {
     const version = packageInfo.version;
 
     // Reference for the last commit hash
-    const lastCommitHash = ref('');
+    const lastCommitHash = ref('loading...');
 
     // Reference for the last commit hash
     const fetchError = ref(false);
@@ -408,6 +408,7 @@ export default {
       } catch (error) {
         console.error('Error fetching last commit:', error);
         fetchError.value = true;
+        lastCommitHash.value = 'offline'; // Update the default value to 'offline' on error
       }
     };
 
