@@ -1201,4 +1201,11 @@ button {
   margin-left: 0px;
   border-radius: 5px;
 }
+
+/* Styles for the acknowledgment message content */
+button:disabled {
+  background-color: #ccc; /* Disabled background color */
+  color: #666; /* Disabled text color */
+  cursor: not-allowed;
+}
 </style>
