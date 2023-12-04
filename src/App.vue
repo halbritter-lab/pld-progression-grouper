@@ -933,6 +933,7 @@ body {
   text-align: center;
   max-width: 800px; /* Maximum width */
   margin: auto; /* Centering the container */
+  padding-bottom: 50px; /* Add bottom padding to avoid content overlap */
 }
 
 /* Style for the progression groups container */
@@ -1176,15 +1177,16 @@ button {
 
 /* Styles for the acknowledgment message */
 .acknowledgment-message {
-  font-size: 12px; /* Larger font size for readability */
+  font-size: 12px;
   background-color: orange;
   color: black;
   text-align: center;
-  padding: 0px;
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-  margin-top: 0; /* Ensure there is no margin on the top */
+  padding: 0px; /* Adjust padding for better visibility */
+  position: fixed; /* Changed from sticky to fixed */
+  bottom: 0; /* Position it at the bottom */
+  left: 0; /* Stretch across the bottom */
+  width: 100%; /* Ensure it spans the entire width */
+  z-index: 1000; /* Keep it above other content */
 }
 
 /* Styles for the acknowledgment message content */
