@@ -1003,12 +1003,17 @@ body {
 
 /* Styling for the output fields displaying normalized TLV and progression group */
 .output-field, .progression-group-output {
-  flex-grow: 1; /* Grow equally */
+  flex-grow: 1;
   border: 1px solid;
   padding: 5px;
   border-radius: 0px;
-  text-align: center; /* Center text */
-  margin-left: 5px; /* Space between outputs */
+  text-align: center;
+  margin-left: 5px;
+  width: 100px; /* Fixed width */
+  height: 20px; /* Fixed height */
+  display: flex;
+  align-items: center; /* Vertically center content */
+  justify-content: center; /* Horizontally center content */
 }
 
 /* Specific styling for progression group output */
@@ -1156,6 +1161,7 @@ button {
   margin-bottom: 1rem;
   border: 1px solid transparent;
   border-radius: .25rem;
+  min-height: 20px; /* Minimum height */
 }
 
 /* Styles for disabled buttons */
