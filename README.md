@@ -160,8 +160,10 @@ This tool is an open-source project, and contributions are welcome. Whether it's
 
 ## Citation policy
 
-- Please cite the following publication for this tool: [ Sierks D, et al. Modelling polycystic liver disease progression using age-adjusted liver volumes and targeted mutational analysis. JHEP Rep. 2022.](https://pubmed.ncbi.nlm.nih.gov/36246085/)
-- A new manuscript reporting the application of this method in autosomal dominant polycystic liver disease is currently under review. A link will be provided here upon publication.
+- Please cite the following publication for this tool and autosomal dominant polycystic kidney disease (ADPKD):
+[Sierks D, et al. Modelling polycystic liver disease progression using age-adjusted liver volumes and targeted mutational analysis. JHEP Rep. 2022.](https://pubmed.ncbi.nlm.nih.gov/36246085/)
+- Please cite the following publication for this tool and autosomal dominant polycystic liver disease (ADPLD):
+[Schönauer R. &amp; Sierks D, et al. Sex, genotype, and liver volume progression as risk of hospitalization determinants in autosomal dominant polycystic liver disease. Gastroenterology. 2023.](https://www.gastrojournal.org/article/S0016-5085(23)05603-2/fulltext)
 
 
 ## Copyright and license
