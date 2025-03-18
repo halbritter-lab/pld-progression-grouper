@@ -734,16 +734,56 @@ export default {
 
       const reader = new FileReader();
       reader.onload = (e) => {
-        const fileData = JSON.parse(e.target.result);
-        dataPoints.value.push(...fileData);
-        fileData.forEach((data) => {
-          chart.data.datasets[0].data.push({
-            x: data.age,
-            y: data.ntlv
+        try {
+          const fileData = JSON.parse(e.target.result);
+          // Expect fileData to be an array of sample objects
+          fileData.forEach((sample) => {
+            // Compute normalized TLV (nTLV) and format to 3 decimals
+            const computedNTLV = (sample.tlv / CONFIG.NORMALIZATION_FACTOR).toFixed(3);
+            
+            // Compute progression group based on computed nTLV and age
+            let computedPG = null;
+            if (computedNTLV > formulas.calculatePG3Threshold(sample.age)) {
+              computedPG = 'PG3';
+            } else if (computedNTLV > formulas.calculatePG2Threshold(sample.age) &&
+                      computedNTLV <= formulas.calculatePG3Threshold(sample.age)) {
+              computedPG = 'PG2';
+            } else {
+              computedPG = 'PG1';
+            }
+            
+            // Compute liver growth rate (LGR) if applicable (only if age > 20)
+            const computedLGR =
+              sample.age > 20
+                ? formulas.calculateLiverGrowthRate(sample.age, computedNTLV)
+                : null;
+
+            // Construct new sample object with computed values
+            const newData = {
+              id: sample.id,
+              age: sample.age,
+              tlv: sample.tlv,
+              ntlv: computedNTLV,
+              pg: computedPG,
+              lgr: computedLGR !== null ? computedLGR.toFixed(2) : 'N/A'
+            };
+
+            // Add to the data points array
+            dataPoints.value.push(newData);
+            
+            // Update the chart dataset. Note: parseFloat to ensure numeric type.
+            chart.data.datasets[0].data.push({
+              x: newData.age,
+              y: parseFloat(computedNTLV),
+              id: newData.id
+            });
           });
-        });
-        chart.update();
+          chart.update();
+        } catch (err) {
+          console.error('Error loading JSON data:', err);
+        }
       };
+
       reader.readAsText(file);
     };
 
