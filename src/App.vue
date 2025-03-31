@@ -1,18 +1,31 @@
 <template>
   <!-- Main application container -->
-  <div id="app" class="container">
-    <div v-if="disclaimerAcknowledged && !showModal" class="acknowledgment-message">
+  <div
+    id="app"
+    class="container"
+  >
+    <div
+      v-if="disclaimerAcknowledged && !showModal"
+      class="acknowledgment-message"
+    >
       <button @click="reopenModal">
         Disclaimer
       </button> acknowledged on this device at: {{ acknowledgmentTime }}.
     </div>
 
     <!-- Modal for displaying the disclaimer -->
-    <div v-if="showModal" class="modal">
+    <div
+      v-if="showModal"
+      class="modal"
+    >
       <div class="modal-content">
         <h2>Disclaimer for PLD-Progression Grouper</h2>
-        <section v-for="(section, index) in disclaimerSections" :key="index">
+        <section
+          v-for="(section, index) in disclaimerSections"
+          :key="index"
+        >
           <h3>{{ section.title }}</h3>
+          <!-- eslint-disable-next-line vue/no-v-html -->
           <p v-html="section.content" />
         </section>
         <button @click="closeModal">
@@ -23,78 +36,171 @@
 
     <!-- Header section with logo and application title -->
     <div class="header">
-      <img src="logo.webp" alt="PLD-Progression Grouper Logo" class="app-logo">
+      <img
+        src="logo.webp"
+        alt="PLD-Progression Grouper Logo"
+        class="app-logo"
+      >
       <h1 class="app-title">
         PLD-Progression Grouper <span class="app-version">v{{ version }}-</span>
-        <span v-if="!fetchError" class="app-commit">{{ lastCommitHash }}</span>
-        <span v-else class="offline-indicator">offline</span>
+        <span
+          v-if="!fetchError"
+          class="app-commit"
+        >{{ lastCommitHash }}</span>
+        <span
+          v-else
+          class="offline-indicator"
+        >offline</span>
       </h1>
     </div>
 
     <!-- Main content area -->
     <div class="content">
       <!-- Warning message for ID -->
-      <div v-if="idWarningMessage" class="id-warning-message">
+      <div
+        v-if="idWarningMessage"
+        class="id-warning-message"
+      >
         {{ idWarningMessage }}
       </div>
 
       <!-- Control section for user inputs -->
-      <div v-if="showControls" class="controls">
+      <div
+        v-if="showControls"
+        class="controls"
+      >
         <div class="input-group">
           <label for="idInput">ID:</label>
-          <input id="idInput" v-model="patientId" type="text" placeholder="Enter ID">
+          <input
+            id="idInput"
+            v-model="patientId"
+            type="text"
+            placeholder="Enter ID"
+          >
         </div>
         <div class="input-group">
           <label for="ageInput">Age [y]:</label>
-          <input id="ageInput" v-model="age" type="number" placeholder="20-80">
+          <input
+            id="ageInput"
+            v-model="age"
+            type="number"
+            placeholder="20-80"
+          >
         </div>
-        <div v-if="ageValidationMessage" class="validation-message">
+        <div
+          v-if="ageValidationMessage"
+          class="validation-message"
+        >
           {{ ageValidationMessage }}
         </div>
         <div class="input-group">
           <label for="liverInput">Total Liver Volume (TLV) [ml] :</label>
-          <input id="liverInput" v-model="totalLiverVolume" type="number" placeholder="0-20000">
+          <input
+            id="liverInput"
+            v-model="totalLiverVolume"
+            type="number"
+            placeholder="0-20000"
+          >
         </div>
-        <div v-if="tlvValidationMessage" class="validation-message">
+        <div
+          v-if="tlvValidationMessage"
+          class="validation-message"
+        >
           {{ tlvValidationMessage }}
         </div>
+
+        <!-- Extra grouping controls -->
+        <button @click="toggleGrouping">
+          {{ enableGrouping ? 'Disable Grouping' : 'Enable Grouping' }}
+        </button>
+        <div
+          v-if="enableGrouping"
+          class="input-group"
+        >
+          <label for="groupInput">Group:</label>
+          <input
+            id="groupInput"
+            v-model="group"
+            type="text"
+            placeholder="Enter group name"
+          >
+        </div>
+        <div
+          v-if="enableGrouping"
+          class="input-group"
+        >
+          <label for="groupColorInput">Group Color:</label>
+          <input
+            id="groupColorInput"
+            v-model="groupColor"
+            type="text"
+            placeholder="e.g. #000000"
+          >
+        </div>
+
         <div class="input-group output-group">
           <label for="normalizedTLV">Normalized Total Liver Volume (nTLV):</label>
           <div class="output-fields">
-            <output id="normalizedTLV" class="output-field">
+            <output
+              id="normalizedTLV"
+              class="output-field"
+            >
               {{ formattedNormalizedTLV }}
             </output>
-            <output id="progressionGroupOutput" :class="`progression-group-output ${progressionGroup}`">
+            <output
+              id="progressionGroupOutput"
+              :class="`progression-group-output ${progressionGroup}`"
+            >
               {{ progressionGroup }}
             </output>
-            <output id="liverGrowthRateOutput" :class="`progression-group-output ${progressionGroup}`">
+            <output
+              id="liverGrowthRateOutput"
+              :class="`progression-group-output ${progressionGroup}`"
+            >
               {{ liverGrowthRate !== null ? liverGrowthRate.toFixed(2) + ' %/y (LGR)' : '' }}
             </output>
           </div>
         </div>
 
         <!-- Buttons for user actions -->
-        <button class="plot-point" :class="{ 'button-disabled': isInvalidInput }" 
-          :disabled="isInvalidInput" @click="addDataPoint">
+        <button
+          class="plot-point"
+          :class="{ 'button-disabled': isInvalidInput }" 
+          :disabled="isInvalidInput"
+          @click="addDataPoint"
+        >
           Plot Data
         </button>
         <button @click="printPage">
           Print Page
         </button>
-        <button :disabled="dataPoints.length === 0" @click="downloadChart">
+        <button
+          :disabled="dataPoints.length === 0"
+          @click="downloadChart"
+        >
           Download Plot
         </button>
-        <button :disabled="dataPoints.length === 0" @click="saveDataAsJson">
+        <button
+          :disabled="dataPoints.length === 0"
+          @click="saveDataAsJson"
+        >
           Save
         </button>
-
         <!-- invisible file input element -->
-        <input ref="fileInput" type="file" style="display: none;" @change="handleFileUpload">
+        <input
+          ref="fileInput"
+          type="file"
+          style="display: none;"
+          @change="handleFileUpload"
+        >
         <!-- Button for triggering the file input -->
         <button @click="triggerFileInput">
           Load
         </button>
-        <button :disabled="dataPoints.length === 0" @click="downloadDataAsExcel">
+        <button
+          :disabled="dataPoints.length === 0"
+          @click="downloadDataAsExcel"
+        >
           Download (Excel)
         </button>
       </div>
@@ -116,9 +222,12 @@
           <strong>PG1</strong><br>&lt;3.3%/y
         </div>
       </div>
-
+  
       <!-- Table to display the data points -->
-      <div v-if="dataPoints.length > 0" class="data-points-table-container">
+      <div
+        v-if="dataPoints.length > 0"
+        class="data-points-table-container"
+      >
         <table class="data-points-table">
           <thead>
             <tr>
@@ -128,17 +237,40 @@
               <th>nTLV</th>
               <th>PG</th>
               <th>LGR [%/y]</th>
+              <th v-if="enableGrouping">
+                Group
+              </th>
+              <th v-if="enableGrouping">
+                Color
+              </th>
               <th>Remove</th>
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(point, index) in dataPoints" :key="point.id">
+            <tr
+              v-for="(point, index) in dataPoints"
+              :key="point.id"
+            >
               <td>{{ point.id }}</td>
               <td>{{ point.age }}</td>
               <td>{{ point.tlv }}</td>
               <td>{{ point.ntlv }}</td>
               <td>{{ point.pg }}</td>
               <td>{{ point.lgr }}</td>
+              <td v-if="enableGrouping">
+                <input
+                  v-model="point.group"
+                  placeholder="Group"
+                  @change="updateChartPoint(index)"
+                >
+              </td>
+              <td v-if="enableGrouping">
+                <input
+                  v-model="point.groupColor"
+                  placeholder="Color"
+                  @change="updateChartPoint(index)"
+                >
+              </td>
               <td>
                 <button @click="removeDataPoint(index)">
                   -
@@ -168,11 +300,17 @@
         <p>
           Please cite the following publication for this tool: <br>
           For ADPKD: 
-          <a href="https://pubmed.ncbi.nlm.nih.gov/36246085/" target="_blank">
+          <a
+            href="https://pubmed.ncbi.nlm.nih.gov/36246085/"
+            target="_blank"
+          >
             Sierks D, et al. Modelling polycystic liver disease progression using age-adjusted liver volumes and targeted mutational analysis. JHEP Rep. 2022.
           </a> <br>
           For ADPLD:
-          <a href="https://www.gastrojournal.org/article/S0016-5085(23)05603-2/fulltext" target="_blank">
+          <a
+            href="https://www.gastrojournal.org/article/S0016-5085(23)05603-2/fulltext"
+            target="_blank"
+          >
             Schönauer R. &amp; Sierks D, et al. Sex, genotype, and liver volume progression as risk of hospitalization determinants in autosomal dominant polycystic liver disease. Gastroenterology. 2023.
           </a>
         </p>
@@ -180,9 +318,21 @@
     </div>
 
     <!-- Footer section with institution and funder logos -->
-    <footer v-if="showFooter" class="footer">
-      <a v-for="link in footerLinks" :key="link.name" :href="link.url" target="_blank">
-        <img :src="link.img" :alt="link.alt" class="institution-logo">
+    <footer
+      v-if="showFooter"
+      class="footer"
+    >
+      <a
+        v-for="link in footerLinks"
+        :key="link.name"
+        :href="link.url"
+        target="_blank"
+      >
+        <img
+          :src="link.img"
+          :alt="link.alt"
+          class="institution-logo"
+        >
       </a>
     </footer>
   </div>
@@ -277,8 +427,13 @@ export default {
     const chartCanvas = ref(null);
     let chart = null;
 
-    const normalizedTLV = computed(() => totalLiverVolume.value / CONFIG.NORMALIZATION_FACTOR);
+    // New reactive properties for grouping
+    const enableGrouping = ref(false);
+    const group = ref('');
+    const groupColor = ref('');
 
+    // Computed properties for normalized values
+    const normalizedTLV = computed(() => totalLiverVolume.value / CONFIG.NORMALIZATION_FACTOR);
     const formattedNormalizedTLV = computed(() => {
       if (
         age.value < CONFIG.AGE_MIN || age.value > CONFIG.AGE_MAX ||
@@ -288,7 +443,6 @@ export default {
       }
       return (totalLiverVolume.value / CONFIG.NORMALIZATION_FACTOR).toFixed(3);
     });
-
     const progressionGroup = computed(() => {
       if (
         age.value < CONFIG.AGE_MIN || age.value > CONFIG.AGE_MAX ||
@@ -302,7 +456,6 @@ export default {
       if (nTLV > formulas.calculatePG2Threshold(patientAge) && nTLV <= formulas.calculatePG3Threshold(patientAge)) return 'PG2';
       return 'PG1';
     });
-
     const liverGrowthRate = computed(() => {
       if (
         age.value < CONFIG.AGE_MIN || age.value > CONFIG.AGE_MAX ||
@@ -313,6 +466,7 @@ export default {
       return formulas.calculateLiverGrowthRate(age.value, normalizedTLV.value);
     });
 
+    // Data points array now supports group and groupColor properties.
     const dataPoints = ref([]);
 
     const addDataPoint = () => {
@@ -330,14 +484,21 @@ export default {
         tlv: totalLiverVolume.value,
         ntlv: formattedNormalizedTLV.value,
         pg: progressionGroup.value,
-        lgr: liverGrowthRate.value !== null ? liverGrowthRate.value.toFixed(2) : 'N/A'
+        lgr: liverGrowthRate.value !== null ? liverGrowthRate.value.toFixed(2) : 'N/A',
+        group: enableGrouping.value ? group.value : '',
+        groupColor: enableGrouping.value ? groupColor.value : null
       };
-
+      if (enableGrouping.value && groupColor.value) {
+        newData.backgroundColor = groupColor.value;
+      }
       dataPoints.value.push(newData);
       chart.data.datasets[0].data.push({
         x: newData.age,
         y: normalizedTLV.value,
-        id: newData.id
+        id: newData.id,
+        group: newData.group,
+        groupColor: newData.groupColor,
+        backgroundColor: newData.backgroundColor
       });
       chart.update();
       idWarningMessage.value = '';
@@ -384,10 +545,16 @@ export default {
             {
               label: 'Age vs Normalized Liver Volume',
               data: [],
+              // Default colors – will be overridden per point if groupColor is defined
               backgroundColor: '#180C0C',
               borderColor: '#180C0C',
               borderWidth: 1,
               pointRadius: 5,
+              // Use pointBackgroundColor callback to allow per-point color override
+              pointBackgroundColor: function(context) {
+                const dataPoint = context.raw;
+                return dataPoint && dataPoint.backgroundColor ? dataPoint.backgroundColor : '#180C0C';
+              }
             },
             {
               label: 'Ceiling',
@@ -480,7 +647,6 @@ export default {
     const handleFileUpload = async (event) => {
       const file = event.target.files[0];
       if (!file) return;
-
       const fileName = file.name.toLowerCase();
       if (file.type === 'application/json' || fileName.endsWith('.json')) {
         loadDataFromJson(event);
@@ -496,7 +662,7 @@ export default {
       }
     };
 
-    // Load data from a JSON file and compute missing values
+    // Load data from a JSON file and compute missing values (including group fields)
     const loadDataFromJson = async (event) => {
       const file = event.target.files[0];
       if (!file) return;
@@ -516,19 +682,28 @@ export default {
               computedPG = 'PG1';
             }
             const computedLGR = sample.age > 20 ? formulas.calculateLiverGrowthRate(sample.age, computedNTLV) : null;
+            // Preserve group information if provided
             const newData = {
               id: sample.id,
               age: sample.age,
               tlv: sample.tlv,
               ntlv: computedNTLV,
               pg: computedPG,
-              lgr: computedLGR !== null ? computedLGR.toFixed(2) : 'N/A'
+              lgr: computedLGR !== null ? computedLGR.toFixed(2) : 'N/A',
+              group: sample.group || '',
+              groupColor: sample.groupColor || null
             };
+            if (newData.groupColor) {
+              newData.backgroundColor = newData.groupColor;
+            }
             dataPoints.value.push(newData);
             chart.data.datasets[0].data.push({
               x: newData.age,
               y: parseFloat(computedNTLV),
-              id: newData.id
+              id: newData.id,
+              group: newData.group,
+              groupColor: newData.groupColor,
+              backgroundColor: newData.backgroundColor
             });
           });
           chart.update();
@@ -539,7 +714,7 @@ export default {
       reader.readAsText(file);
     };
 
-    // Load data from an Excel file and compute missing values
+    // Load data from an Excel file and compute missing values (including group fields)
     const loadDataFromExcel = async (event) => {
       const file = event.target.files[0];
       if (!file) return;
@@ -573,13 +748,21 @@ export default {
               tlv: tlvValue,
               ntlv: computedNTLV,
               pg: computedPG,
-              lgr: computedLGR !== null ? computedLGR.toFixed(2) : 'N/A'
+              lgr: computedLGR !== null ? computedLGR.toFixed(2) : 'N/A',
+              group: row.group || '',
+              groupColor: row.groupColor || null
             };
+            if (newData.groupColor) {
+              newData.backgroundColor = newData.groupColor;
+            }
             dataPoints.value.push(newData);
             chart.data.datasets[0].data.push({
               x: newData.age,
               y: parseFloat(computedNTLV),
-              id: newData.id
+              id: newData.id,
+              group: newData.group,
+              groupColor: newData.groupColor,
+              backgroundColor: newData.backgroundColor
             });
           });
           chart.update();
@@ -613,6 +796,22 @@ export default {
     const fileInput = ref(null);
     const triggerFileInput = () => {
       if (fileInput.value) fileInput.value.click();
+    };
+
+    // Called when a group or groupColor is modified inline in the table.
+    const updateChartPoint = (index) => {
+      const sample = dataPoints.value[index];
+      // Update the corresponding chart point backgroundColor based on groupColor.
+      const chartPoint = chart.data.datasets[0].data[index];
+      chartPoint.backgroundColor = sample.groupColor ? sample.groupColor : '#180C0C';
+      chartPoint.group = sample.group;
+      chartPoint.groupColor = sample.groupColor;
+      chart.update();
+    };
+
+    // Toggle grouping mode
+    const toggleGrouping = () => {
+      enableGrouping.value = !enableGrouping.value;
     };
 
     onMounted(() => {
@@ -668,6 +867,12 @@ export default {
       showCitation,
       showDocumentation,
       showControls,
+      // New grouping reactive variables and methods
+      enableGrouping,
+      group,
+      groupColor,
+      toggleGrouping,
+      updateChartPoint
     };
   }
 };
