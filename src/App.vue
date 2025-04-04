@@ -60,9 +60,13 @@
       >
 
       <!-- Container for the chart visualization -->
-      <div class="chart-container">
-        <canvas ref="chartCanvas" />
-      </div>
+      <ChartDisplay 
+        ref="chartDisplayRef" 
+        :data-points="dataPoints"
+        :enable-grouping="enableGrouping"
+        :group="group"
+        :group-color="groupColor"
+      />
 
       <!-- Progression Group Squares -->
       <div class="progression-groups">
@@ -151,10 +155,8 @@
 
 <script>
 // Import necessary Vue APIs and libraries
-import { ref, onMounted, onUnmounted, computed, watch } from 'vue';
+import { ref, computed, watch, nextTick, onMounted, onUnmounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
-import { Chart, registerables } from 'chart.js';
-import * as XLSX from 'xlsx';
 import packageInfo from '../package.json';
 import { CONFIG } from '@/config/config';
 import disclaimerMixin from './mixins/disclaimerMixin';
@@ -166,10 +168,8 @@ import DocumentationSection from './components/DocumentationSection.vue'; // Imp
 import CitationSection from './components/CitationSection.vue'; // Import the CitationSection component
 import AppFooter from './components/AppFooter.vue'; // Import the AppFooter component
 import InputControls from './components/InputControls.vue'; // Import the InputControls component
+import ChartDisplay from './components/ChartDisplay.vue'; // Import the ChartDisplay component
 import '@/styles/app.css'; // Import the global/app styles
-
-// Register Chart.js components
-Chart.register(...registerables);
 
 export default {
   components: {
@@ -178,7 +178,8 @@ export default {
     DocumentationSection,
     CitationSection,
     AppFooter,
-    InputControls
+    InputControls,
+    ChartDisplay
   },
   mixins: [disclaimerMixin, footerMixin],
   setup() {
@@ -250,8 +251,8 @@ export default {
     const patientId = ref('');
     const age = ref(CONFIG.AGE_MIN);
     const totalLiverVolume = ref(CONFIG.TLV_MIN);
-    const chartCanvas = ref(null);
-    let chart = null;
+    const chartDisplayRef = ref(null); // Ref for the ChartDisplay component instance
+    const fileInput = ref(null); // Keep ref for file input
 
     // New reactive properties for grouping
     const enableGrouping = ref(false);
@@ -318,15 +319,6 @@ export default {
         newData.backgroundColor = groupColor.value;
       }
       dataPoints.value.push(newData);
-      chart.data.datasets[0].data.push({
-        x: newData.age,
-        y: normalizedTLV.value,
-        id: newData.id,
-        group: newData.group,
-        groupColor: newData.groupColor,
-        backgroundColor: newData.backgroundColor
-      });
-      chart.update();
       idWarningMessage.value = '';
     };
 
@@ -348,104 +340,6 @@ export default {
 
     const removeDataPoint = (index) => {
       dataPoints.value.splice(index, 1);
-      if (chart && chart.data.datasets.length > 0) {
-        chart.data.datasets[0].data.splice(index, 1);
-        chart.update();
-      }
-    };
-
-    const handleResize = () => {
-      if (chart) {
-        chart.resize();
-      }
-    };
-
-    const setupChart = () => {
-      const ctx = chartCanvas.value.getContext('2d');
-      const lineData1 = formulas.generateLineData1(61, 20);
-      const lineData2 = formulas.generateLineData2(61, 20);
-      chart = new Chart(ctx, {
-        type: 'scatter',
-        data: {
-          datasets: [
-            {
-              label: 'Age vs Normalized Liver Volume',
-              data: [],
-              // Default colors – will be overridden per point if groupColor is defined
-              backgroundColor: '#180C0C',
-              borderColor: '#180C0C',
-              borderWidth: 1,
-              pointRadius: 5,
-              // Use pointBackgroundColor callback to allow per-point color override
-              pointBackgroundColor: function(context) {
-                const dataPoint = context.raw;
-                return dataPoint && dataPoint.backgroundColor ? dataPoint.backgroundColor : '#180C0C';
-              }
-            },
-            {
-              label: 'Ceiling',
-              data: Array.from({ length: 61 }, (_, i) => ({ x: 20 + i, y: 25 })),
-              borderColor: 'transparent',
-              borderWidth: 0,
-              showLine: true,
-              pointRadius: 0,
-              fill: '+1',
-              backgroundColor: '#B2241C33'
-            },
-            {
-              label: 'Trend Line 1',
-              data: lineData1,
-              borderColor: '#B2241C',
-              borderWidth: 3,
-              showLine: true,
-              pointRadius: 0,
-              fill: '+1',
-              backgroundColor: '#F64C4633'
-            },
-            {
-              label: 'Trend Line 2',
-              data: lineData2,
-              borderColor: '#F64C46',
-              borderWidth: 2,
-              showLine: true,
-              pointRadius: 0,
-              fill: 'origin',
-              backgroundColor: '#FDA3A133'
-            }
-          ]
-        },
-        options: {
-          scales: {
-            x: {
-              title: { display: true, text: 'Age (years)' },
-              type: 'linear',
-              min: CONFIG.CHART_X_AXIS_MIN,
-              max: CONFIG.CHART_X_AXIS_MAX
-            },
-            y: {
-              title: { display: true, text: 'nTLV' },
-              beginAtZero: true,
-              max: CONFIG.CHART_Y_AXIS_MAX
-            }
-          },
-          plugins: {
-            legend: { display: false },
-            tooltip: {
-              callbacks: {
-                label: function(context) {
-                  let label = context.dataset.label || '';
-                  if (label) label += ': ';
-                  if (context.parsed.x !== null) label += context.parsed.x;
-                  if (context.parsed.y !== null) label += ', ' + context.parsed.y.toFixed(2);
-                  const dataPoint = context.raw;
-                  if (dataPoint && dataPoint.id) label += `; ID: ${dataPoint.id}`;
-                  return label;
-                }
-              }
-            }
-          }
-        }
-      });
     };
 
     const printPage = () => {
@@ -453,10 +347,7 @@ export default {
     };
 
     const downloadChart = () => {
-      const link = document.createElement('a');
-      link.href = chartCanvas.value.toDataURL('image/png');
-      link.download = 'plot.png';
-      link.click();
+      chartDisplayRef.value?.downloadChart();
     };
 
     const saveDataAsJson = () => {
@@ -523,16 +414,7 @@ export default {
               newData.backgroundColor = newData.groupColor;
             }
             dataPoints.value.push(newData);
-            chart.data.datasets[0].data.push({
-              x: newData.age,
-              y: parseFloat(computedNTLV),
-              id: newData.id,
-              group: newData.group,
-              groupColor: newData.groupColor,
-              backgroundColor: newData.backgroundColor
-            });
           });
-          chart.update();
         } catch (err) {
           console.error('Error loading JSON data:', err);
         }
@@ -582,16 +464,7 @@ export default {
               newData.backgroundColor = newData.groupColor;
             }
             dataPoints.value.push(newData);
-            chart.data.datasets[0].data.push({
-              x: newData.age,
-              y: parseFloat(computedNTLV),
-              id: newData.id,
-              group: newData.group,
-              groupColor: newData.groupColor,
-              backgroundColor: newData.backgroundColor
-            });
           });
-          chart.update();
         } catch (err) {
           console.error('Error reading Excel data:', err);
         }
@@ -619,7 +492,6 @@ export default {
       XLSX.writeFile(wb, fileName);
     };
 
-    const fileInput = ref(null);
     const triggerFileInput = () => {
       if (fileInput.value) fileInput.value.click();
     };
@@ -628,11 +500,7 @@ export default {
     const updateChartPoint = (index) => {
       const sample = dataPoints.value[index];
       // Update the corresponding chart point backgroundColor based on groupColor.
-      const chartPoint = chart.data.datasets[0].data[index];
-      chartPoint.backgroundColor = sample.groupColor ? sample.groupColor : '#180C0C';
-      chartPoint.group = sample.group;
-      chartPoint.groupColor = sample.groupColor;
-      chart.update();
+      chartDisplayRef.value?.updatePointStyle(index, sample.groupColor ? sample.groupColor : null, sample.group);
     };
 
     // Toggle grouping mode
@@ -641,21 +509,19 @@ export default {
     };
 
     onMounted(() => {
-      getUrlQueryParams();
+      getUrlQueryParams(); // Parse URL params first
       document.documentElement.style.setProperty('--modal-max-width', CONFIG.MODAL_MAX_WIDTH);
       document.documentElement.style.setProperty('--modal-max-height', CONFIG.MODAL_MAX_HEIGHT);
-      fetchLastCommit();
+      fetchLastCommit(); // Call fetchLastCommit here
       document.title = 'PLD-Progression Grouper';
       updateMetaTag('description', 'PLD-Progression Grouper is a Vue.js web application, based on extensive research, offering insights into Polycystic Liver Disease (PLD) progression. Developed by Bernt Popp, Ria Schönauer, Dana Sierks, and Jan Halbritter, this tool facilitates understanding of PLD for both educational and research purposes.');
       updateMetaTag('keywords', 'PLD, Polycystic Liver Disease, Liver Health, Medical Research, Data Visualization, Vue.js, Web Application, Liver Disease Progression, Medical Education, Healthcare Technology');
       updateMetaTag('author', 'Bernt Popp, Ria Schönauer, Dana Sierks, Jan Halbritter');
       updateMetaTag('creator', 'Bernt Popp, Ria Schönauer, Dana Sierks, Jan Halbritter');
-      setupChart();
-      window.addEventListener('resize', handleResize);
     });
 
     onUnmounted(() => {
-      window.removeEventListener('resize', handleResize);
+      // No longer need to remove resize listener here
     });
 
     return {
@@ -680,7 +546,6 @@ export default {
       liverGrowthRate,
       addDataPoint,
       removeDataPoint,
-      chartCanvas,
       printPage,
       downloadChart,
       fileInput,

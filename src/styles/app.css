@@ -87,10 +87,11 @@ body {
   justify-content: center;
   align-items: center;
   margin-top: 20px;
+  height: 450px; /* Explicit height for the container */
 }
 canvas {
   max-width: 100%;
-  height: auto;
+  height: 100%; /* Allow canvas to fill the container height */
 }
 button {
   margin: 5px;
