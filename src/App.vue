@@ -37,7 +37,7 @@
     <!-- Header section with logo and application title -->
     <div class="header">
       <img
-        src="logo.webp"
+        src="./assets/logo.webp"
         alt="PLD-Progression Grouper Logo"
         class="app-logo"
       >
