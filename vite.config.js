@@ -63,7 +63,10 @@ export default defineConfig(({ command }) => {
     },
     server: {
         port: 8080, // Or your preferred port
-        open: true // Automatically open browser
+        open: true, // Automatically open browser
+        watch: {
+          usePolling: true
+        }
     }
   }
 })
