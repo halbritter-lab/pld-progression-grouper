@@ -24,154 +24,40 @@
 
     <!-- Main content area -->
     <div class="content">
-      <!-- Warning message for ID -->
-      <div
-        v-if="idWarningMessage"
-        class="id-warning-message"
-      >
-        {{ idWarningMessage }}
-      </div>
-
-      <!-- Control section for user inputs -->
-      <div
+      <!-- Use the InputControls component -->
+      <InputControls
         v-if="showControls"
-        class="controls"
+        v-model:patientId="patientId"
+        v-model:age="age"
+        v-model:totalLiverVolume="totalLiverVolume"
+        v-model:group="group"
+        v-model:groupColor="groupColor"
+        :enable-grouping="enableGrouping"
+        :id-warning-message="idWarningMessage"
+        :age-validation-message="ageValidationMessage"
+        :tlv-validation-message="tlvValidationMessage"
+        :formatted-normalized-t-l-v="formattedNormalizedTLV"
+        :progression-group="progressionGroup"
+        :liver-growth-rate="liverGrowthRate"
+        :is-invalid-input="isInvalidInput"
+        :data-points-length="dataPoints.length"
+        @toggle-grouping="toggleGrouping"
+        @add-data-point="addDataPoint"
+        @print-page="printPage"
+        @download-chart="downloadChart"
+        @save-data-as-json="saveDataAsJson"
+        @trigger-load="triggerFileInput" 
+        @download-data-as-excel="downloadDataAsExcel"
+      />
+
+      <!-- Hidden file input remains in App.vue to handle file loading logic -->
+      <input
+        ref="fileInput"
+        type="file"
+        style="display: none;"
+        accept=".json"
+        @change="handleFileUpload"
       >
-        <div class="input-group">
-          <label for="idInput">ID:</label>
-          <input
-            id="idInput"
-            v-model="patientId"
-            type="text"
-            placeholder="Enter ID"
-          >
-        </div>
-        <div class="input-group">
-          <label for="ageInput">Age [y]:</label>
-          <input
-            id="ageInput"
-            v-model="age"
-            type="number"
-            placeholder="20-80"
-          >
-        </div>
-        <div
-          v-if="ageValidationMessage"
-          class="validation-message"
-        >
-          {{ ageValidationMessage }}
-        </div>
-        <div class="input-group">
-          <label for="liverInput">Total Liver Volume (TLV) [ml] :</label>
-          <input
-            id="liverInput"
-            v-model="totalLiverVolume"
-            type="number"
-            placeholder="0-20000"
-          >
-        </div>
-        <div
-          v-if="tlvValidationMessage"
-          class="validation-message"
-        >
-          {{ tlvValidationMessage }}
-        </div>
-
-        <!-- Extra grouping controls -->
-        <button @click="toggleGrouping">
-          {{ enableGrouping ? 'Disable Grouping' : 'Enable Grouping' }}
-        </button>
-        <div
-          v-if="enableGrouping"
-          class="input-group"
-        >
-          <label for="groupInput">Group:</label>
-          <input
-            id="groupInput"
-            v-model="group"
-            type="text"
-            placeholder="Enter group name"
-          >
-        </div>
-        <div
-          v-if="enableGrouping"
-          class="input-group"
-        >
-          <label for="groupColorInput">Group Color:</label>
-          <input
-            id="groupColorInput"
-            v-model="groupColor"
-            type="text"
-            placeholder="e.g. #000000"
-          >
-        </div>
-
-        <div class="input-group output-group">
-          <label for="normalizedTLV">Normalized Total Liver Volume (nTLV):</label>
-          <div class="output-fields">
-            <output
-              id="normalizedTLV"
-              class="output-field"
-            >
-              {{ formattedNormalizedTLV }}
-            </output>
-            <output
-              id="progressionGroupOutput"
-              :class="`progression-group-output ${progressionGroup}`"
-            >
-              {{ progressionGroup }}
-            </output>
-            <output
-              id="liverGrowthRateOutput"
-              :class="`progression-group-output ${progressionGroup}`"
-            >
-              {{ liverGrowthRate !== null ? liverGrowthRate.toFixed(2) + ' %/y (LGR)' : '' }}
-            </output>
-          </div>
-        </div>
-
-        <!-- Buttons for user actions -->
-        <button
-          class="plot-point"
-          :class="{ 'button-disabled': isInvalidInput }" 
-          :disabled="isInvalidInput"
-          @click="addDataPoint"
-        >
-          Plot Data
-        </button>
-        <button @click="printPage">
-          Print Page
-        </button>
-        <button
-          :disabled="dataPoints.length === 0"
-          @click="downloadChart"
-        >
-          Download Plot
-        </button>
-        <button
-          :disabled="dataPoints.length === 0"
-          @click="saveDataAsJson"
-        >
-          Save
-        </button>
-        <!-- invisible file input element -->
-        <input
-          ref="fileInput"
-          type="file"
-          style="display: none;"
-          @change="handleFileUpload"
-        >
-        <!-- Button for triggering the file input -->
-        <button @click="triggerFileInput">
-          Load
-        </button>
-        <button
-          :disabled="dataPoints.length === 0"
-          @click="downloadDataAsExcel"
-        >
-          Download (Excel)
-        </button>
-      </div>
 
       <!-- Container for the chart visualization -->
       <div class="chart-container">
@@ -279,6 +165,7 @@ import AppHeader from './components/AppHeader.vue'; // Import the AppHeader comp
 import DocumentationSection from './components/DocumentationSection.vue'; // Import the DocumentationSection component
 import CitationSection from './components/CitationSection.vue'; // Import the CitationSection component
 import AppFooter from './components/AppFooter.vue'; // Import the AppFooter component
+import InputControls from './components/InputControls.vue'; // Import the InputControls component
 import '@/styles/app.css'; // Import the global/app styles
 
 // Register Chart.js components
@@ -290,7 +177,8 @@ export default {
     AppHeader,
     DocumentationSection,
     CitationSection,
-    AppFooter
+    AppFooter,
+    InputControls
   },
   mixins: [disclaimerMixin, footerMixin],
   setup() {
