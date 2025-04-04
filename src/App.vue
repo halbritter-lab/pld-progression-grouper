@@ -15,25 +15,12 @@
       @reopen-modal="reopenModal"
     />
 
-    <!-- Header section with logo and application title -->
-    <div class="header">
-      <img
-        src="./assets/logo.webp"
-        alt="PLD-Progression Grouper Logo"
-        class="app-logo"
-      >
-      <h1 class="app-title">
-        PLD-Progression Grouper <span class="app-version">v{{ version }}-</span>
-        <span
-          v-if="!fetchError"
-          class="app-commit"
-        >{{ lastCommitHash }}</span>
-        <span
-          v-else
-          class="offline-indicator"
-        >offline</span>
-      </h1>
-    </div>
+    <!-- Use the AppHeader component -->
+    <AppHeader
+      :version="version"
+      :last-commit-hash="lastCommitHash"
+      :fetch-error="fetchError"
+    />
 
     <!-- Main content area -->
     <div class="content">
@@ -262,60 +249,17 @@
         </table>
       </div>
 
-      <!-- Documentation sentence with link -->
-      <div v-if="showDocumentation">
-        <p>
-          For a detailed documentation of this tool and the methodology, please refer to the <a
-            href="https://github.com/halbritter-lab/pld-progression-grouper"
-            target="_blank"
-          >GitHub README</a>.
-          Let us know if you like this tool and how we can improve it using our <a
-            href="https://docs.google.com/forms/d/1MM4g1Ukjiy73ThWUMHARDcyQg-PwOWuI46kQV5HwXmY"
-            target="_blank"
-          >Feedback Form</a>.
-        </p>
-      </div>
-
-      <!-- Citation policy sentences with links -->
-      <div v-if="showCitation">
-        <p>
-          Please cite the following publication for this tool: <br>
-          For ADPKD: 
-          <a
-            href="https://pubmed.ncbi.nlm.nih.gov/36246085/"
-            target="_blank"
-          >
-            Sierks D, et al. Modelling polycystic liver disease progression using age-adjusted liver volumes and targeted mutational analysis. JHEP Rep. 2022.
-          </a> <br>
-          For ADPLD:
-          <a
-            href="https://www.gastrojournal.org/article/S0016-5085(23)05603-2/fulltext"
-            target="_blank"
-          >
-            Schönauer R. &amp; Sierks D, et al. Sex, genotype, and liver volume progression as risk of hospitalization determinants in autosomal dominant polycystic liver disease. Gastroenterology. 2023.
-          </a>
-        </p>
-      </div>
+      <!-- Use the CitationSection component -->
+      <CitationSection :show-citation="showCitation" />
+      <!-- Use the DocumentationSection component -->
+      <DocumentationSection :show-documentation="showDocumentation" />
     </div>
-
-    <!-- Footer section with institution and funder logos -->
-    <footer
-      v-if="showFooter"
-      class="footer"
-    >
-      <a
-        v-for="link in footerLinks"
-        :key="link.name"
-        :href="link.url"
-        target="_blank"
-      >
-        <img
-          :src="link.img"
-          :alt="link.alt"
-          class="institution-logo"
-        >
-      </a>
-    </footer>
+    <!-- Use the AppFooter component -->
+    <!-- Note: footerLinks prop is provided by the footerMixin -->
+    <AppFooter
+      :show-footer="showFooter"
+      :footer-links="footerLinks"
+    />
   </div>
 </template>
 
@@ -331,13 +275,21 @@ import disclaimerMixin from './mixins/disclaimerMixin';
 import footerMixin from './mixins/footerMixin';
 import { formulas } from '@/config/formulasConfig';
 import DisclaimerModal from './components/DisclaimerModal.vue'; // Import the component
+import AppHeader from './components/AppHeader.vue'; // Import the AppHeader component
+import DocumentationSection from './components/DocumentationSection.vue'; // Import the DocumentationSection component
+import CitationSection from './components/CitationSection.vue'; // Import the CitationSection component
+import AppFooter from './components/AppFooter.vue'; // Import the AppFooter component
 
 // Register Chart.js components
 Chart.register(...registerables);
 
 export default {
   components: {
-    DisclaimerModal // Register the component
+    DisclaimerModal,
+    AppHeader,
+    DocumentationSection,
+    CitationSection,
+    AppFooter
   },
   mixins: [disclaimerMixin, footerMixin],
   setup() {
@@ -884,26 +836,6 @@ body {
   font-weight: normal;
   padding-left: 0px;
 }
-.header {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  width: 100%;
-}
-.app-logo {
-  max-width: 92px;
-  margin-right: 20px;
-  animation: fadeIn 2s ease-out forwards;
-}
-.app-logo:hover {
-  animation: pulse 2s infinite;
-}
-.app-title {
-  font-size: 24px;
-  font-weight: bold;
-  margin: 0;
-}
 .container {
   text-align: center;
   max-width: 800px;
@@ -1020,17 +952,6 @@ button {
 .controls button.plot-point:hover {
   background-color: #0062cc;
   border-color: #0056b3;
-}
-.footer {
-  padding: 10px 0;
-  background-color: #f5f5f5;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.institution-logo, .funder-logo {
-  max-width: 120px;
-  margin: 0 20px;
 }
 .data-points-table-container {
   margin-top: 20px;
