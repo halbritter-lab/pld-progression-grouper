@@ -11,7 +11,6 @@ import annotationPlugin from 'chartjs-plugin-annotation'; // Import annotation p
 import { formulas } from '@/config/formulasConfig'; // Import formulas
 import { CONFIG } from '@/config/config'; // Import CONFIG for axis limits
 import html2canvas from 'html2canvas';
-import C2S from 'canvas2svg';
 
 // Register Chart.js components and plugins
 Chart.register(...registerables);
@@ -33,7 +32,7 @@ let chartInstance = null;
 // Function to initialize the chart
 const initChart = () => {
   if (chartCanvas.value) {
-    const ctx = chartCanvas.value.getContext('2d');
+    const ctx = chartCanvas.value.getContext('2d', { willReadFrequently: true });
     // Generate data for background lines/areas based on formulas
     const lineLength = CONFIG.CHART_X_AXIS_MAX - CONFIG.CHART_X_AXIS_MIN + 1;
     const startAge = CONFIG.CHART_X_AXIS_MIN;
@@ -178,9 +177,13 @@ const updateChartPoint = (index, sample) => {
   chartInstance.update(); // Update the chart to reflect changes
 };
 
-// Function to download the chart as PNG and SVG
+// Function to download the chart as PNG
 const downloadChart = async () => {
-  if (!chartCanvas.value) return;
+  // Ensure the ref is available and chart instance exists
+  if (!chartCanvas.value || !chartInstance) {
+    console.error('Canvas element or chart instance not available for download.');
+    return;
+  }
 
   // Create PNG
   const canvas = await html2canvas(chartCanvas.value);
@@ -191,32 +194,9 @@ const downloadChart = async () => {
   document.body.appendChild(downloadLink);
   downloadLink.click();
   document.body.removeChild(downloadLink);
-
-  // Create SVG
-  const svgContext = new C2S(chartCanvas.value.width, chartCanvas.value.height);
-  // Re-draw the chart onto the SVG context (requires chartInstance)
-  if (chartInstance) {
-      // Temporarily replace the original context to draw on SVG context
-      const originalContext = chartInstance.ctx;
-      chartInstance.ctx = svgContext;
-      chartInstance.draw();
-      chartInstance.ctx = originalContext; // Restore original context
-
-      const svgData = svgContext.getSerializedSvg();
-      const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
-      const svgUrl = URL.createObjectURL(svgBlob);
-      downloadLink = document.createElement('a');
-      downloadLink.href = svgUrl;
-      downloadLink.download = 'pld-progression-chart.svg';
-      document.body.appendChild(downloadLink);
-      downloadLink.click();
-      document.body.removeChild(downloadLink);
-      URL.revokeObjectURL(svgUrl);
-  }
 };
 
-// Expose downloadChart function so it can be called from parent if needed
-// Or keep it internal and trigger download via a button within this component
+// Expose downloadChart and updateChartPoint functions so they can be called from parent if needed
 defineExpose({ downloadChart, updateChartPoint });
 
 onMounted(() => {

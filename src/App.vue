@@ -45,19 +45,15 @@
         @add-data-point="addDataPoint"
         @print-page="printPage"
         @download-chart="downloadChart"
-        @save-data-as-json="saveDataAsJson"
-        @trigger-load="triggerFileInput" 
-        @download-data-as-excel="downloadDataAsExcel"
+        @save-data-as-json="() => saveDataAsJson(dataPoints)"
+        @trigger-load="triggerLoad"
+        @download-data-as-excel="() => downloadDataAsExcel(dataPoints)"
       />
 
-      <!-- Hidden file input remains in App.vue to handle file loading logic -->
-      <input
-        ref="fileInput"
-        type="file"
-        style="display: none;"
-        accept=".json"
-        @change="handleFileUpload"
-      >
+      <!-- Loading Error Display -->
+      <div v-if="loadingError" class="validation-message"> 
+        {{ loadingError }}
+      </div>
 
       <!-- Container for the chart visualization -->
       <ChartDisplay 
@@ -162,6 +158,7 @@ import { CONFIG } from '@/config/config';
 import disclaimerMixin from './mixins/disclaimerMixin';
 import footerMixin from './mixins/footerMixin';
 import { formulas } from '@/config/formulasConfig';
+import { useDataPersistence } from '@/composables/useDataPersistence'; // Import the composable
 import DisclaimerModal from './components/DisclaimerModal.vue'; // Import the component
 import AppHeader from './components/AppHeader.vue'; // Import the AppHeader component
 import DocumentationSection from './components/DocumentationSection.vue'; // Import the DocumentationSection component
@@ -186,6 +183,15 @@ export default {
     // Router and route references
     const router = useRouter();
     const route = useRoute();
+
+    // --- Use the Data Persistence Composable ---
+    const { 
+      triggerLoad, 
+      saveDataAsJson, 
+      downloadDataAsExcel, 
+      loadedData, 
+      errorLoading: loadingError // Rename for template clarity
+    } = useDataPersistence();
 
     const version = packageInfo.version;
     const lastCommitHash = ref('loading...');
@@ -252,7 +258,6 @@ export default {
     const age = ref(CONFIG.AGE_MIN);
     const totalLiverVolume = ref(CONFIG.TLV_MIN);
     const chartDisplayRef = ref(null); // Ref for the ChartDisplay component instance
-    const fileInput = ref(null); // Keep ref for file input
 
     // New reactive properties for grouping
     const enableGrouping = ref(false);
@@ -346,132 +351,45 @@ export default {
       window.print();
     };
 
-    const downloadChart = () => {
-      chartDisplayRef.value?.downloadChart();
-    };
-
-    const saveDataAsJson = () => {
-      const dataStr = JSON.stringify(dataPoints.value);
-      const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
-      const exportFileDefaultName = `data_${new Date().toISOString()}.json`;
-      const linkElement = document.createElement('a');
-      linkElement.setAttribute('href', dataUri);
-      linkElement.setAttribute('download', exportFileDefaultName);
-      linkElement.click();
-    };
-
-    // Unified file upload handler that determines file type and calls appropriate loader
-    const handleFileUpload = async (event) => {
-      const file = event.target.files[0];
-      if (!file) return;
-      const fileName = file.name.toLowerCase();
-      if (file.type === 'application/json' || fileName.endsWith('.json')) {
-        loadDataFromJson(event);
-      } else if (
-        file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' ||
-        file.type === 'application/vnd.ms-excel' ||
-        fileName.endsWith('.xlsx') ||
-        fileName.endsWith('.xls')
-      ) {
-        loadDataFromExcel(event);
+    const downloadChart = async () => {
+      await nextTick(); // Wait for potential updates
+ 
+      if (chartDisplayRef.value) {
+        // Check type again before calling
+        if (typeof chartDisplayRef.value.downloadChart === 'function') {
+          chartDisplayRef.value.downloadChart();
+        } else {
+          console.error('Error: downloadChart method not found on ChartDisplay component instance.');
+        }
       } else {
-        console.error('Unsupported file type.');
+        console.error('Error: chartDisplayRef is null.');
       }
     };
 
-    // Load data from a JSON file and compute missing values (including group fields)
-    const loadDataFromJson = async (event) => {
-      const file = event.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        try {
-          const fileData = JSON.parse(e.target.result);
-          fileData.forEach((sample) => {
-            const computedNTLV = (sample.tlv / CONFIG.NORMALIZATION_FACTOR).toFixed(3);
-            let computedPG = null;
-            if (computedNTLV > formulas.calculatePG3Threshold(sample.age)) {
-              computedPG = 'PG3';
-            } else if (computedNTLV > formulas.calculatePG2Threshold(sample.age) &&
-                       computedNTLV <= formulas.calculatePG3Threshold(sample.age)) {
-              computedPG = 'PG2';
-            } else {
-              computedPG = 'PG1';
-            }
-            const computedLGR = sample.age > 20 ? formulas.calculateLiverGrowthRate(sample.age, computedNTLV) : null;
-            // Preserve group information if provided
-            const newData = {
-              id: sample.id,
-              age: sample.age,
-              tlv: sample.tlv,
-              ntlv: computedNTLV,
-              pg: computedPG,
-              lgr: computedLGR !== null ? computedLGR.toFixed(2) : 'N/A',
-              group: sample.group || '',
-              groupColor: sample.groupColor || null
-            };
-            if (newData.groupColor) {
-              newData.backgroundColor = newData.groupColor;
-            }
-            dataPoints.value.push(newData);
+    // Watch for data loaded by the composable
+    watch(loadedData, (newDataArray) => {
+      if (newDataArray && newDataArray.length > 0) {
+        // Replace existing data points
+        dataPoints.value = [...newDataArray]; // Create new array to trigger reactivity
+        // Clear and update the chart
+        chartDisplayRef.value?.clearChart();
+        newDataArray.forEach(point => {
+          chartDisplayRef.value?.addPoint({
+            x: point.age,
+            y: parseFloat(point.ntlv),
+            id: point.id,
+            group: point.group,
+            groupColor: point.groupColor, // Pass raw color
+            backgroundColor: point.groupColor || null // Set background color for the point
           });
-        } catch (err) {
-          console.error('Error loading JSON data:', err);
-        }
-      };
-      reader.readAsText(file);
-    };
+        });
+        // Clear the loaded data in the composable after processing
+        // to allow loading the same file again if needed
+        loadedData.value = []; 
+      }
+    });
 
-    // Load data from an Excel file and compute missing values (including group fields)
-    const loadDataFromExcel = async (event) => {
-      const file = event.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        try {
-          const data = new Uint8Array(e.target.result);
-          const workbook = XLSX.read(data, { type: 'array' });
-          const firstSheetName = workbook.SheetNames[0];
-          const worksheet = workbook.Sheets[firstSheetName];
-          const jsonData = XLSX.utils.sheet_to_json(worksheet, { defval: '' });
-          jsonData.forEach((row) => {
-            if (!row.id || !row.age || !row.tlv) return;
-            const ageValue = Number(row.age);
-            const tlvValue = Number(row.tlv);
-            if (isNaN(ageValue) || isNaN(tlvValue)) return;
-            const computedNTLV = (tlvValue / CONFIG.NORMALIZATION_FACTOR).toFixed(3);
-            let computedPG = null;
-            if (computedNTLV > formulas.calculatePG3Threshold(ageValue)) {
-              computedPG = 'PG3';
-            } else if (computedNTLV > formulas.calculatePG2Threshold(ageValue) &&
-                       computedNTLV <= formulas.calculatePG3Threshold(ageValue)) {
-              computedPG = 'PG2';
-            } else {
-              computedPG = 'PG1';
-            }
-            const computedLGR = ageValue > 20 ? formulas.calculateLiverGrowthRate(ageValue, computedNTLV) : null;
-            const newData = {
-              id: row.id,
-              age: ageValue,
-              tlv: tlvValue,
-              ntlv: computedNTLV,
-              pg: computedPG,
-              lgr: computedLGR !== null ? computedLGR.toFixed(2) : 'N/A',
-              group: row.group || '',
-              groupColor: row.groupColor || null
-            };
-            if (newData.groupColor) {
-              newData.backgroundColor = newData.groupColor;
-            }
-            dataPoints.value.push(newData);
-          });
-        } catch (err) {
-          console.error('Error reading Excel data:', err);
-        }
-      };
-      reader.readAsArrayBuffer(file);
-    };
-
+    // Helper function to update or create meta tags
     function updateMetaTag(name, content) {
       let tag = document.querySelector(`meta[name="${name}"]`);
       if (tag) {
@@ -482,21 +400,8 @@ export default {
         tag.setAttribute('content', content);
         document.head.appendChild(tag);
       }
-    }
-
-    const downloadDataAsExcel = () => {
-      const wb = XLSX.utils.book_new();
-      const ws = XLSX.utils.json_to_sheet(dataPoints.value);
-      XLSX.utils.book_append_sheet(wb, ws, "Data");
-      const fileName = `Data_${new Date().toISOString()}.xlsx`;
-      XLSX.writeFile(wb, fileName);
     };
 
-    const triggerFileInput = () => {
-      if (fileInput.value) fileInput.value.click();
-    };
-
-    // Called when a group or groupColor is modified inline in the table.
     const updateChartPoint = (index) => {
       const sample = dataPoints.value[index];
       // Update the corresponding chart point backgroundColor based on groupColor.
@@ -508,8 +413,10 @@ export default {
       enableGrouping.value = !enableGrouping.value;
     };
 
-    onMounted(() => {
-      getUrlQueryParams(); // Parse URL params first
+    onMounted(async () => { // Make onMounted async if using await inside
+      // Ensure DOM is updated and refs are available before accessing URL params that might interact with refs
+      await nextTick(); 
+      getUrlQueryParams(); 
       document.documentElement.style.setProperty('--modal-max-width', CONFIG.MODAL_MAX_WIDTH);
       document.documentElement.style.setProperty('--modal-max-height', CONFIG.MODAL_MAX_HEIGHT);
       fetchLastCommit(); // Call fetchLastCommit here
@@ -548,23 +455,27 @@ export default {
       removeDataPoint,
       printPage,
       downloadChart,
-      fileInput,
-      triggerFileInput,
+      triggerLoad,
       saveDataAsJson,
-      handleFileUpload,
       downloadDataAsExcel,
       fetchError,
       showFooter,
       showCitation,
       showDocumentation,
       showControls,
-      // New grouping reactive variables and methods
+      loadingError,
+      // Grouping
       enableGrouping,
       group,
       groupColor,
       toggleGrouping,
-      updateChartPoint
+      updateChartPoint,
+      chartDisplayRef // Return the ref for the ChartDisplay component
     };
   }
 };
 </script>
+
+<style>
+/* ... */
+</style>
