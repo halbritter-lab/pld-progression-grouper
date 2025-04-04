@@ -4,35 +4,16 @@
     id="app"
     class="container"
   >
-    <div
-      v-if="disclaimerAcknowledged && !showModal"
-      class="acknowledgment-message"
-    >
-      <button @click="reopenModal">
-        Disclaimer
-      </button> acknowledged on this device at: {{ acknowledgmentTime }}.
-    </div>
-
-    <!-- Modal for displaying the disclaimer -->
-    <div
-      v-if="showModal"
-      class="modal"
-    >
-      <div class="modal-content">
-        <h2>Disclaimer for PLD-Progression Grouper</h2>
-        <section
-          v-for="(section, index) in disclaimerSections"
-          :key="index"
-        >
-          <h3>{{ section.title }}</h3>
-          <!-- eslint-disable-next-line vue/no-v-html -->
-          <p v-html="section.content" />
-        </section>
-        <button @click="closeModal">
-          I Acknowledge
-        </button>
-      </div>
-    </div>
+    <!-- Note: disclaimerSections prop is provided by the disclaimerMixin -->
+    <!-- Use the DisclaimerModal component -->
+    <DisclaimerModal
+      :show-modal="showModal"
+      :disclaimer-acknowledged="disclaimerAcknowledged"
+      :acknowledgment-time="acknowledgmentTime"
+      :disclaimer-sections="disclaimerSections"
+      @close-modal="closeModal"
+      @reopen-modal="reopenModal"
+    />
 
     <!-- Header section with logo and application title -->
     <div class="header">
@@ -349,11 +330,15 @@ import { CONFIG } from '@/config/config';
 import disclaimerMixin from './mixins/disclaimerMixin';
 import footerMixin from './mixins/footerMixin';
 import { formulas } from '@/config/formulasConfig';
+import DisclaimerModal from './components/DisclaimerModal.vue'; // Import the component
 
 // Register Chart.js components
 Chart.register(...registerables);
 
 export default {
+  components: {
+    DisclaimerModal // Register the component
+  },
   mixins: [disclaimerMixin, footerMixin],
   setup() {
     // Router and route references
@@ -899,48 +884,12 @@ body {
   font-weight: normal;
   padding-left: 0px;
 }
-.modal {
-  position: fixed;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-@media (max-width: 600px) {
-  .modal-content {
-    max-width: var(--modal-max-width);
-    max-height: var(--modal-max-height);
-    padding: 10px;
-  }
-}
-.modal-content {
-  background-color: white;
-  padding: 20px;
-  border-radius: 5px;
-  max-width: 500px;
-  width: 90%;
-  text-align: left;
-  overflow-y: auto;
-  max-height: 90%;
-}
 .header {
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
   width: 100%;
-}
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-@keyframes pulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.1); }
 }
 .app-logo {
   max-width: 92px;
@@ -1143,28 +1092,6 @@ button {
   text-align: center;
   border-radius: 3px;
   font-size: 16px;
-}
-.acknowledgment-message {
-  font-size: 12px;
-  background-color: orange;
-  color: black;
-  text-align: center;
-  padding: 0px;
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  z-index: 1000;
-}
-.acknowledgment-message button {
-  background-color: white;
-  color: black;
-  border: 1px solid black;
-  padding: 1px 6px;
-  font-size: 12px;
-  cursor: pointer;
-  margin-left: 0px;
-  border-radius: 5px;
 }
 button:disabled {
   background-color: #ccc;
