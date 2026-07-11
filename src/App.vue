@@ -420,8 +420,10 @@ export default {
       document.documentElement.style.setProperty('--modal-max-width', CONFIG.MODAL_MAX_WIDTH);
       document.documentElement.style.setProperty('--modal-max-height', CONFIG.MODAL_MAX_HEIGHT);
       fetchLastCommit(); // Call fetchLastCommit here
-      document.title = 'PLD-Progression Grouper';
-      updateMetaTag('description', 'PLD-Progression Grouper is a Vue.js web application, based on extensive research, offering insights into Polycystic Liver Disease (PLD) progression. Developed by Bernt Popp, Ria Schönauer, Dana Sierks, and Jan Halbritter, this tool facilitates understanding of PLD for both educational and research purposes.');
+      // Deprecated: keep the runtime title/description consistent with the
+      // deprecation banner and static <head> (see index.html, DEPRECATION.md).
+      document.title = '[Deprecated] PLD-Progression Grouper — moved to ChIC';
+      updateMetaTag('description', 'Deprecated: the PLD-Progression Grouper is no longer maintained. It has been superseded by the Charité Imaging Classification (ChIC), available at https://halbritter-lab.github.io/ChIC/.');
       updateMetaTag('keywords', 'PLD, Polycystic Liver Disease, Liver Health, Medical Research, Data Visualization, Vue.js, Web Application, Liver Disease Progression, Medical Education, Healthcare Technology');
       updateMetaTag('author', 'Bernt Popp, Ria Schönauer, Dana Sierks, Jan Halbritter');
       updateMetaTag('creator', 'Bernt Popp, Ria Schönauer, Dana Sierks, Jan Halbritter');
