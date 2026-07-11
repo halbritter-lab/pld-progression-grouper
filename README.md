@@ -1,3 +1,10 @@
+> [!WARNING]
+> **⚠️ This project is deprecated and no longer maintained.**
+>
+> It has been superseded by the **Charité Imaging Classification (ChIC)**.
+> 👉 **Use the new tool: https://halbritter-lab.github.io/ChIC/** &nbsp;([repository](https://github.com/halbritter-lab/ChIC))
+>
+> This repository stays online for reference. The method implemented here was published as [PMID:36246085](https://pubmed.ncbi.nlm.nih.gov/36246085/); ChIC implements the successor Charité Imaging Classification (classes A–E). See [halbritter-lab/ChIC#34](https://github.com/halbritter-lab/ChIC/issues/34) for context.
 
 <p align="center">
     <img src="public/logo.png" alt="PLD-Progression Grouper logo" width="192" height="192">
