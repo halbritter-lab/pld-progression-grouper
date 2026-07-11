@@ -5,12 +5,70 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <link rel="icon" href="/favicon.ico">
-    <title>PLD Progression Grouper</title>
+    <title>[Deprecated] PLD Progression Grouper — moved to ChIC</title>
+    <meta name="description" content="Deprecated: the PLD-Progression Grouper is no longer maintained. It has been superseded by the Charité Imaging Classification (ChIC), available at https://halbritter-lab.github.io/ChIC/.">
+    <!--
+      Deprecation banner (see DEPRECATION.md).
+      Kept as static markup + inline styles in index.html — outside #app — so it
+      paints instantly, needs no JavaScript, and stays visible even if the Vue
+      app fails to boot. Vue mounts into #app and never touches this sibling node.
+    -->
+    <style>
+      #deprecation-banner {
+        position: sticky;
+        top: 0;
+        /* Above the disclaimer modal (z-index 1001) so the notice is never hidden. */
+        z-index: 2147483000;
+        box-sizing: border-box;
+        width: 100%;
+        margin: 0;
+        padding: 10px 16px;
+        background: #00bf7d;
+        color: #08261c;
+        border-bottom: 2px solid #08261c;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 15px;
+        line-height: 1.45;
+        text-align: center;
+      }
+      #deprecation-banner .dep-text { vertical-align: middle; }
+      #deprecation-banner strong { font-weight: 700; }
+      #deprecation-banner a.dep-cta {
+        display: inline-block;
+        margin-left: 10px;
+        padding: 4px 12px;
+        background: #08261c;
+        color: #ffffff;
+        border-radius: 4px;
+        font-weight: 700;
+        text-decoration: none;
+        white-space: nowrap;
+        vertical-align: middle;
+      }
+      #deprecation-banner a.dep-cta:hover,
+      #deprecation-banner a.dep-cta:focus {
+        background: #0b3a2b;
+        outline: 2px solid #08261c;
+        outline-offset: 2px;
+      }
+      @media (max-width: 560px) {
+        #deprecation-banner { font-size: 13px; padding: 8px 10px; }
+        #deprecation-banner a.dep-cta { display: block; width: max-content; margin: 8px auto 2px; }
+      }
+    </style>
   </head>
   <body>
     <noscript>
       <strong>We're sorry but this app doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
     </noscript>
+    <!-- Deprecation / forwarding notice — must remain the first child of <body>, a sibling of #app. -->
+    <div id="deprecation-banner" role="region" aria-label="Deprecation notice">
+      <span class="dep-text">
+        ⚠️ <strong>This tool is no longer maintained.</strong>
+        It has been superseded by the <strong>Charité Imaging Classification (ChIC)</strong>.
+      </span>
+      <a class="dep-cta" href="https://halbritter-lab.github.io/ChIC/" rel="noopener">Open ChIC →</a>
+    </div>
     <div id="app"></div>
     <script type="module" src="/src/main.js"></script>
     <!-- built files will be auto injected - This comment is no longer accurate for Vite -->
